@@ -1,0 +1,264 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const homeUrl = Astro.site ? new URL('/', Astro.site).href : undefined;
+const heroUrl = Astro.site ? new URL('/images/smritisoudho-reflection.jpg', Astro.site).href : undefined;
+
+const faq = [
+  {
+    q: 'জাতীয় স্মৃতিসৌধ কোথায় অবস্থিত?',
+    a: 'জাতীয় স্মৃতিসৌধ ঢাকা জেলার সাভারের নবীনগর এলাকায়, ঢাকা–আরিচা মহাসড়কের পাশে অবস্থিত। ঢাকা শহর থেকে সড়কপথে দূরত্ব প্রায় ৩৫ কিলোমিটার।'
+  },
+  {
+    q: 'এখানে প্রবেশের জন্য টিকিট লাগে কি?',
+    a: 'প্রকাশিত সরকারি ও স্থানীয় তথ্যসূত্রে সাধারণ দর্শনার্থীর জন্য প্রবেশ ফি উল্লেখ নেই। বিশেষ অনুষ্ঠান, নিরাপত্তা ব্যবস্থা বা ব্যবস্থাপনা পরিবর্তনের কারণে নিয়ম বদলাতে পারে, তাই গুরুত্বপূর্ণ সফরের আগে সরকারি সূত্রে যাচাই করা ভালো।'
+  },
+  {
+    q: 'কত সময় নিয়ে ঘোরা ভালো?',
+    a: 'স্থাপত্য, প্রতিফলন-পুকুর, উদ্যান ও স্মৃতিচিহ্নগুলো ধীরস্থিরভাবে দেখতে প্রায় দেড় থেকে দুই ঘণ্টা রাখলে স্বাচ্ছন্দ্য হয়। এটি একটি ভ্রমণ-পরিকল্পনার পরামর্শ, সরকারি নির্ধারিত সময় নয়।'
+  },
+  {
+    q: 'ঢাকা থেকে গণপরিবহনে কীভাবে যাব?',
+    a: 'সাভার ও নবীনগরমুখী বাসে ঢাকা–আরিচা মহাসড়ক ধরে নবীনগর নামা যায়। সাভার উপজেলা প্রশাসনের পর্যটন তথ্যে বিআরটিসি ও বিভিন্ন স্থানীয় বাসপথের উল্লেখ আছে; রুট ও স্টপ পরিবর্তনশীল হওয়ায় যাত্রার দিন অপারেটরের সঙ্গে নিশ্চিত করুন।'
+  },
+  {
+    q: '২৬ মার্চ বা ১৬ ডিসেম্বর গেলে কী জানা দরকার?',
+    a: 'জাতীয় দিবসে স্মৃতিসৌধে আনুষ্ঠানিক শ্রদ্ধা নিবেদন, অতিরিক্ত ভিড় ও নিরাপত্তা নিয়ন্ত্রণ থাকতে পারে। নীরব পরিবেশে দেখতে চাইলে অন্য দিন বেছে নেওয়া সুবিধাজনক; জাতীয় দিবসে গেলে বাড়তি সময় হাতে রাখুন।'
+  }
+];
+
+const attraction: Record<string, unknown> = {
+  '@context': 'https://schema.org',
+  '@type': ['TouristAttraction', 'LocalBusiness'],
+  name: 'জাতীয় স্মৃতিসৌধ',
+  alternateName: 'National Martyrs’ Monument',
+  description: 'সাভারে অবস্থিত বাংলাদেশের মুক্তিযুদ্ধের শহীদদের স্মরণে নির্মিত জাতীয় স্মৃতিসৌধের স্বাধীন দর্শনার্থী তথ্য-গাইড।',
+  ...(homeUrl ? { url: homeUrl } : {}),
+  ...(heroUrl ? { image: [heroUrl] } : {}),
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'ঢাকা–আরিচা মহাসড়ক, নবীনগর',
+    addressLocality: 'সাভার',
+    addressRegion: 'ঢাকা',
+    postalCode: '1344',
+    addressCountry: 'BD'
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: 23.9113,
+    longitude: 90.2547
+  },
+  openingHoursSpecification: [{
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],
+    opens: '06:00',
+    closes: '18:00'
+  }],
+  isAccessibleForFree: true,
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: '4.6',
+    bestRating: '5'
+  },
+  sameAs: [
+    'https://maps.app.goo.gl/kfUxNKYsDusuGj9f6',
+    'https://beautifulbangladesh.gov.bd/loc/dhaka/93',
+    'https://bn.banglapedia.org/index.php?title=জাতীয়_স্মৃতিসৌধ'
+  ]
+};
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.map(item => ({
+    '@type': 'Question',
+    name: item.q,
+    acceptedAnswer: { '@type': 'Answer', text: item.a }
+  }))
+};
+---
+<BaseLayout
+  title="জাতীয় স্মৃতিসৌধ, সাভার | ইতিহাস, যাতায়াত ও দর্শনার্থী গাইড"
+  description="সাভারের জাতীয় স্মৃতিসৌধ ভ্রমণের বাংলা গাইড—ইতিহাস, স্থাপত্য, প্রবেশ, যাতায়াত, পার্কিং, আশপাশ, খাবার ও সাধারণ প্রশ্ন।"
+  jsonLd={[attraction, faqSchema]}
+>
+  <section class="relative min-h-[78vh] overflow-hidden bg-[#14251e] text-white">
+    <img src="/images/smritisoudho-reflection.jpg" alt="জাতীয় স্মৃতিসৌধ ও সামনের প্রতিফলন-পুকুর" class="absolute inset-0 h-full w-full object-cover" width="1280" height="853" fetchpriority="high" />
+    <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/45 to-black/15"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-[#14251e] via-transparent to-transparent"></div>
+    <div class="container-shell relative flex min-h-[78vh] items-end py-14 sm:py-20">
+      <div class="max-w-4xl">
+        <p class="mb-5 inline-flex rounded-full border border-white/30 bg-black/25 px-4 py-2 text-sm font-semibold backdrop-blur">সাভার · ঢাকা · বাংলাদেশের জাতীয় স্মারক</p>
+        <h1 class="text-5xl font-black leading-[1.06] tracking-tight sm:text-7xl lg:text-8xl">জাতীয়<br/>স্মৃতিসৌধ</h1>
+        <p class="mt-6 max-w-2xl text-lg leading-8 text-white/84 sm:text-xl">মুক্তিযুদ্ধে শহীদদের প্রতি জাতির শ্রদ্ধার স্থাপত্য—সাত জোড়া ত্রিভুজাকার প্রাচীর, প্রতিফলন-পুকুর, উদ্যান এবং স্মৃতির এক নীরব অক্ষ।</p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="#ভ্রমণ" class="focus-ring rounded-full bg-[#b53a35] px-6 py-3 font-bold text-white no-underline hover:bg-[#9d302c]">ভ্রমণ পরিকল্পনা</a>
+          <a href="#যাতায়াত" class="focus-ring rounded-full border border-white/35 bg-white/10 px-6 py-3 font-bold text-white no-underline backdrop-blur hover:bg-white/20">কীভাবে যাবেন</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="border-b border-black/10 bg-[#eee8dc]">
+    <div class="container-shell grid divide-y divide-black/10 py-7 sm:grid-cols-4 sm:divide-x sm:divide-y-0">
+      <div class="px-4 py-3"><p class="text-xs font-bold text-[#8a2e2a]">অবস্থান</p><p class="mt-1 font-bold">নবীনগর, সাভার</p></div>
+      <div class="px-4 py-3"><p class="text-xs font-bold text-[#8a2e2a]">ঢাকা থেকে</p><p class="mt-1 font-bold">প্রায় ৩৫ কিলোমিটার</p></div>
+      <div class="px-4 py-3"><p class="text-xs font-bold text-[#8a2e2a]">মূল কাঠামোর উচ্চতা</p><p class="mt-1 font-bold">প্রায় ১৫০ ফুট</p></div>
+      <div class="px-4 py-3"><p class="text-xs font-bold text-[#8a2e2a]">মানচিত্রের রেটিং</p><p class="mt-1 font-bold">৪.৬ / ৫ <span class="font-normal text-black/55">পরিবর্তনশীল</span></p></div>
+    </div>
+  </section>
+
+  <section id="স্মৃতি" class="memorial-lines container-shell py-18 sm:py-24">
+    <div class="relative grid gap-12 lg:grid-cols-[.9fr_1.1fr] lg:items-center">
+      <div>
+        <p class="section-kicker">স্মৃতি ও স্থাপত্য</p>
+        <h2 class="mt-3 text-4xl font-black leading-tight sm:text-5xl">সাতটি ঐতিহাসিক অধ্যায়ের দিকে ওঠা এক স্মারক</h2>
+        <div class="prose-bn mt-6 space-y-4 text-lg">
+          <p>জাতীয় স্মৃতিসৌধ বাংলাদেশের ১৯৭১ সালের মুক্তিযুদ্ধে শহীদদের স্মরণে নির্মিত। সাভারে ঢাকা থেকে প্রায় ৩৫ কিলোমিটার উত্তর-পশ্চিমে অবস্থিত এই স্মারকের নকশা করেন স্থপতি সৈয়দ মাইনুল হোসেন।</p>
+          <p>১৯৭৮ সালের জাতীয় নকশা প্রতিযোগিতায় ৫৭টি প্রস্তাবের মধ্য থেকে তাঁর নকশা নির্বাচিত হয়। মূল স্মারকটি সাত জোড়া ত্রিভুজাকার কংক্রিট প্রাচীরের ধারাবাহিকতায় নির্মিত; প্রায় ১৫০ ফুট উচ্চতার শীর্ষের দিকে এগোতে এগোতে প্রাচীরগুলো বাংলাদেশের স্বাধীনতার দীর্ঘ রাজনৈতিক সংগ্রামের সাতটি অধ্যায়কে স্মরণ করায়।</p>
+        </div>
+        <div class="mt-8 flex flex-wrap gap-3 text-sm font-semibold">
+          <a class="rounded-full border border-black/15 px-4 py-2 hover:border-[#8a2e2a] hover:text-[#8a2e2a]" target="_blank" rel="noopener noreferrer" href="https://savar.dhaka.gov.bd/pages/tourist-spot/697f940935ce18e1c06b73cd">সাভার উপজেলা প্রশাসনের তথ্য</a>
+          <a class="rounded-full border border-black/15 px-4 py-2 hover:border-[#8a2e2a] hover:text-[#8a2e2a]" target="_blank" rel="noopener noreferrer" href="https://beautifulbangladesh.gov.bd/loc/dhaka/93">বাংলাদেশ ট্যুরিজম বোর্ডের তথ্য</a>
+        </div>
+      </div>
+      <figure class="overflow-hidden rounded-[2rem] bg-[#1b3027] shadow-2xl shadow-black/10">
+        <img src="/images/smritisoudho-aerial.jpg" alt="উঁচু দৃষ্টিকোণ থেকে জাতীয় স্মৃতিসৌধ, সবুজ উদ্যান ও প্রতিফলন-পুকুর" width="1280" height="853" loading="lazy" class="aspect-[4/3] w-full object-cover" />
+        <figcaption class="px-5 py-4 text-sm text-white/70">স্মারক, জলাধার ও লাল ইটের জ্যামিতিক ভূদৃশ্য একই অক্ষে সাজানো।</figcaption>
+      </figure>
+    </div>
+
+    <div class="relative mt-16 grid gap-3 sm:grid-cols-2 lg:grid-cols-7">
+      {[
+        ['১৯৫২','ভাষা আন্দোলন'],['১৯৫৪','যুক্তফ্রন্টের নির্বাচন'],['১৯৫৬','শাসনতান্ত্রিক আন্দোলন'],['১৯৬২','শিক্ষা আন্দোলন'],['১৯৬৬','ছয় দফা আন্দোলন'],['১৯৬৯','গণঅভ্যুত্থান'],['১৯৭১','মুক্তিযুদ্ধ']
+      ].map(([year,label], i) => (
+        <div class="relative overflow-hidden rounded-2xl border border-black/10 bg-white/65 p-5 pt-12">
+          <span class="absolute left-5 top-0 h-9 w-px bg-[#8a2e2a]" style={`transform:rotate(${(i-3)*3}deg);transform-origin:top`}></span>
+          <p class="text-2xl font-black text-[#8a2e2a]">{year}</p><p class="mt-1 text-sm font-bold leading-6">{label}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section id="ভ্রমণ" class="bg-[#173d30] py-18 text-white sm:py-24">
+    <div class="container-shell">
+      <p class="text-sm font-bold tracking-wider text-[#e1b7a8]">দর্শনার্থী পরিকল্পনা</p>
+      <h2 class="mt-3 max-w-3xl text-4xl font-black sm:text-5xl">শ্রদ্ধাশীল, ধীরস্থির একটি সফর</h2>
+      <div class="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+        <article class="rounded-3xl border border-white/12 bg-white/[.06] p-6"><p class="text-sm font-bold text-[#e1b7a8]">প্রবেশ ও সময়</p><h3 class="mt-2 text-xl font-black">সাধারণত বিনা টিকিটে</h3><p class="mt-3 leading-7 text-white/72">স্থানীয় সরকারি তথ্যে সকাল ৬টা থেকে সন্ধ্যা ৬টা পর্যন্ত দর্শনের কথা উল্লেখ আছে। জাতীয় দিবস, রাষ্ট্রীয় অনুষ্ঠান বা নিরাপত্তাজনিত কারণে সময় ও প্রবেশ নিয়ন্ত্রণ বদলাতে পারে।</p></article>
+        <article class="rounded-3xl border border-white/12 bg-white/[.06] p-6"><p class="text-sm font-bold text-[#e1b7a8]">সেরা সময়</p><h3 class="mt-2 text-xl font-black">সকাল বা শেষ বিকেল</h3><p class="mt-3 leading-7 text-white/72">নরম আলো, তুলনামূলক আরামদায়ক আবহ ও স্থাপত্যের ছায়া-রেখা দেখার জন্য সকাল এবং শেষ বিকেল সুবিধাজনক। শীতের মাসগুলো সাধারণত আরামদায়ক।</p></article>
+        <article class="rounded-3xl border border-white/12 bg-white/[.06] p-6"><p class="text-sm font-bold text-[#e1b7a8]">সময় রাখুন</p><h3 class="mt-2 text-xl font-black">প্রায় ১.৫–২ ঘণ্টা</h3><p class="mt-3 leading-7 text-white/72">প্রধান স্মারক, প্রতিফলন-পুকুর, উদ্যান ও স্মৃতিস্থানগুলো তাড়াহুড়ো না করে দেখতে এই সময়টি একটি ব্যবহারিক গাইডলাইন।</p></article>
+        <article class="rounded-3xl border border-white/12 bg-white/[.06] p-6"><p class="text-sm font-bold text-[#e1b7a8]">আচরণ</p><h3 class="mt-2 text-xl font-black">নীরবতা ও মর্যাদা</h3><p class="mt-3 leading-7 text-white/72">এটি জাতীয় স্মৃতিস্থান। ফুল দেওয়ার এলাকা, সমাধিক্ষেত্র ও আনুষ্ঠানিক পথের প্রতি সম্মান রাখুন; নিরাপত্তাকর্মীর নির্দেশনা অনুসরণ করুন।</p></article>
+      </div>
+      <p class="mt-6 text-sm leading-6 text-white/55">দ্রষ্টব্য: সময়, প্রবেশ ও বিশেষ দিনের ব্যবস্থাপনা পরিবর্তনশীল। এই গাইড স্থায়ী সরকারি ঘোষণা নয়।</p>
+    </div>
+  </section>
+
+  <section class="container-shell py-18 sm:py-24">
+    <div class="grid gap-6 lg:grid-cols-2">
+      <figure class="overflow-hidden rounded-[2rem] bg-[#eee8dc]">
+        <img src="/images/smritisoudho-walkway.jpg" alt="লাল ইটের পথ ধরে দূরে দৃশ্যমান জাতীয় স্মৃতিসৌধ" width="1280" height="720" loading="lazy" class="aspect-[16/10] w-full object-cover" />
+        <figcaption class="p-5 text-sm text-black/60">লাল ইট, সবুজ উদ্যান এবং কংক্রিটের স্মারক—কমপ্লেক্সের প্রধান ভিজ্যুয়াল ভাষা।</figcaption>
+      </figure>
+      <div class="grid gap-6 sm:grid-cols-2">
+        <article class="card rounded-3xl p-7"><p class="section-kicker">টিকিট / খরচ</p><h2 class="mt-2 text-2xl font-black">প্রবেশ ফি</h2><p class="mt-4 leading-7 text-[#4d5751]">প্রকাশিত স্থানীয় সরকারি তথ্যসূত্রে সাধারণ প্রবেশ ফি উল্লেখ নেই। পরিবহন, খাবার বা ব্যক্তিগত সেবার খরচ আলাদা। কোনো অনানুষ্ঠানিক অর্থপ্রদানের দাবি এলে কর্তৃপক্ষের কাছে যাচাই করুন।</p></article>
+        <article class="card rounded-3xl p-7"><p class="section-kicker">পার্কিং</p><h2 class="mt-2 text-2xl font-black">আগে পিক-আপ পয়েন্ট ঠিক করুন</h2><p class="mt-4 leading-7 text-[#4d5751]">নির্দিষ্ট পার্কিং ধারণক্ষমতা বা ফি সম্পর্কে নির্ভরযোগ্য সরকারি অনলাইন তথ্য পাওয়া যায় না। ব্যবস্থাপনার নির্দেশিত স্থান ব্যবহার করুন; বড় জাতীয় অনুষ্ঠানে যান চলাচল ও পার্কিং সীমিত হতে পারে।</p></article>
+        <article class="card rounded-3xl p-7 sm:col-span-2"><p class="section-kicker">যা সঙ্গে নেবেন</p><h2 class="mt-2 text-2xl font-black">সহজ প্রস্তুতি</h2><div class="mt-4 grid gap-3 text-sm leading-6 sm:grid-cols-2"><p>• পানীয় জল ও রোদে মাথা ঢাকার ব্যবস্থা</p><p>• আরামদায়ক হাঁটার জুতা</p><p>• বর্ষায় ছাতা বা হালকা রেইনকোট</p><p>• জাতীয় দিবসে বাড়তি সময় ও পরিচয়পত্র</p></div></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="যাতায়াত" class="border-y border-black/10 bg-[#e7dfd2] py-18 sm:py-24">
+    <div class="container-shell grid gap-12 lg:grid-cols-[.9fr_1.1fr]">
+      <div>
+        <p class="section-kicker">বিস্তারিত যাতায়াত</p>
+        <h2 class="mt-3 text-4xl font-black sm:text-5xl">ঢাকা–আরিচা মহাসড়ক ধরে নবীনগর</h2>
+        <div class="mt-7 space-y-5">
+          <div class="flex gap-4"><span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#8a2e2a] font-black text-white">১</span><div><h3 class="font-black">ঢাকার পশ্চিমমুখী করিডর</h3><p class="mt-1 leading-7 text-[#505a54]">শাহবাগ, ফার্মগেট, আসাদ গেট, শ্যামলী ও গাবতলী হয়ে সাভারমুখী সড়কপথে যেতে পারেন। যানজট অনুযায়ী সময় উল্লেখযোগ্যভাবে বদলাতে পারে।</p></div></div>
+          <div class="flex gap-4"><span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#8a2e2a] font-black text-white">২</span><div><h3 class="font-black">বাসে নবীনগর নামুন</h3><p class="mt-1 leading-7 text-[#505a54]">সাভার উপজেলা প্রশাসনের পর্যটন তথ্যে বিআরটিসিসহ সাভার–নবীনগরগামী কয়েকটি বাসপথের উল্লেখ রয়েছে। অপারেটর ও রুট পরিবর্তনশীল, তাই যাত্রার দিন গন্তব্য “জাতীয় স্মৃতিসৌধ, নবীনগর” বলে নিশ্চিত করুন।</p></div></div>
+          <div class="flex gap-4"><span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#8a2e2a] font-black text-white">৩</span><div><h3 class="font-black">গাড়ি / রাইড সেবা</h3><p class="mt-1 leading-7 text-[#505a54]">মানচিত্রে “জাতীয় স্মৃতিসৌধ” অথবা প্লাস কোড W763+GW, Savar ব্যবহার করুন। ফেরার সময় চালকের সঙ্গে মিলিত হওয়ার স্থান আগে ঠিক করে রাখুন।</p></div></div>
+        </div>
+      </div>
+      <div class="overflow-hidden rounded-[2rem] border border-black/10 bg-white p-2 shadow-xl shadow-black/5">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6487.412098247093!2d90.2522003771468!3d23.911298478561065!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755e8fb9aa0707f%3A0x7f247dcf3afffae9!2sNational%20Martyrs'%20Monument!5e1!3m2!1sbn!2sbd!4v1788484997889!5m2!1sbn!2sbd"
+          class="h-[520px] w-full rounded-[1.55rem] border-0"
+          allowfullscreen
+          loading="lazy"
+          referrerpolicy="strict-origin-when-cross-origin"
+          title="জাতীয় স্মৃতিসৌধের মানচিত্র"
+        ></iframe>
+        <div class="flex flex-wrap items-center justify-between gap-3 p-4 text-sm">
+          <span class="text-black/60">ঢাকা–আরিচা মহাসড়ক, সাভার ১৩৪৪ · W763+GW</span>
+          <a href="https://maps.app.goo.gl/kfUxNKYsDusuGj9f6" target="_blank" rel="noopener noreferrer" class="font-bold text-[#8a2e2a]">বড় মানচিত্র খুলুন →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="আশপাশ" class="container-shell py-18 sm:py-24">
+    <div class="max-w-3xl">
+      <p class="section-kicker">আশপাশে সময় কাটানো</p>
+      <h2 class="mt-3 text-4xl font-black sm:text-5xl">খাবার ও কাছাকাছি দেখার জায়গা</h2>
+      <p class="mt-5 text-lg leading-8 text-[#505a54]">নিচের তালিকা কোনো বাণিজ্যিক সুপারিশ নয়; ভ্রমণের রুট পরিকল্পনার জন্য এলাকা ও জনপরিসরভিত্তিক নির্দেশনা। খোলার সময় ও প্রবেশের নিয়ম আলাদাভাবে যাচাই করুন।</p>
+    </div>
+    <div class="mt-10 grid gap-6 lg:grid-cols-2">
+      <div class="card rounded-[2rem] p-7 sm:p-9">
+        <p class="section-kicker">কাছাকাছি খাবার</p>
+        <h3 class="mt-2 text-2xl font-black">স্থানীয় খাবারের তিনটি সুবিধাজনক এলাকা</h3>
+        <div class="mt-6 divide-y divide-black/10">
+          <div class="py-5"><h4 class="font-black">নবীনগর বাসস্ট্যান্ড ও মহাসড়কসংলগ্ন এলাকা</h4><p class="mt-1 leading-7 text-[#566059]">ভাত, ডাল, ভর্তা, মাছ-মাংস, চা ও হালকা নাশতার ছোট খাবারের দোকান পাওয়া যায়। ভিড়ের দিনে বসার জায়গা সীমিত হতে পারে।</p></div>
+          <div class="py-5"><h4 class="font-black">জাহাঙ্গীরনগর বিশ্ববিদ্যালয়ের বটতলা</h4><p class="mt-1 leading-7 text-[#566059]">ক্যাম্পাসের পরিচিত খাবার এলাকা; স্থানীয় রান্না ও সাশ্রয়ী খাবারের জন্য পরিচিত। বিশ্ববিদ্যালয়ের প্রবেশনীতি ও সময় মেনে চলুন।</p></div>
+          <div class="py-5"><h4 class="font-black">সাভার বাজার এলাকা</h4><p class="mt-1 leading-7 text-[#566059]">ফেরার পথে বেশি বৈচিত্র্যের খাবার ও দৈনন্দিন প্রয়োজনীয় জিনিস পাওয়ার সম্ভাবনা বেশি।</p></div>
+        </div>
+      </div>
+      <div class="card rounded-[2rem] p-7 sm:p-9">
+        <p class="section-kicker">কাছাকাছি দর্শন</p>
+        <h3 class="mt-2 text-2xl font-black">একই সফরে রাখা যায়</h3>
+        <div class="mt-6 divide-y divide-black/10">
+          <div class="py-5"><h4 class="font-black">জাহাঙ্গীরনগর বিশ্ববিদ্যালয়</h4><p class="mt-1 leading-7 text-[#566059]">সবুজ ক্যাম্পাস, জলাশয় ও শীতকালে পরিযায়ী পাখির জন্য পরিচিত। ক্যাম্পাসের চলমান প্রবেশনীতি মানুন।</p></div>
+          <div class="py-5"><h4 class="font-black">জাহাঙ্গীরনগর বিশ্ববিদ্যালয় উদ্ভিদ উদ্যান</h4><p class="mt-1 leading-7 text-[#566059]">উদ্ভিদবৈচিত্র্য ও শান্ত হাঁটার পরিবেশের জন্য উপযোগী; সাধারণ প্রবেশের সময় আগে যাচাই করুন।</p></div>
+          <div class="py-5"><h4 class="font-black">সাভারের ঐতিহাসিক ও স্মৃতিস্থানসমূহ</h4><p class="mt-1 leading-7 text-[#566059]">সাভার উপজেলা প্রশাসনের পর্যটন তালিকায় আরও কয়েকটি স্থান রয়েছে। দূরত্ব, প্রবেশাধিকার ও নিরাপত্তা যাচাই করে রুট সাজান।</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bg-[#8a2e2a] py-16 text-white">
+    <div class="container-shell grid items-center gap-8 lg:grid-cols-[1.1fr_.9fr]">
+      <div>
+        <p class="text-sm font-bold text-white/70">ভূগোল দিয়ে পরিচয় নিশ্চিত করুন</p>
+        <h2 class="mt-2 text-3xl font-black sm:text-4xl">নবীনগর, সাভার · ঢাকা জেলা · বাংলাদেশ</h2>
+        <p class="mt-4 max-w-3xl leading-8 text-white/78">স্মৃতিসৌধটি ঢাকা–আরিচা মহাসড়কের পাশে সাভার উপজেলার নবীনগরে। কেন্দ্রীয় অবস্থান আনুমানিক ২৩.৯১১৩° উত্তর, ৯০.২৫৪৭° পূর্ব। এটি বাংলাদেশের মুক্তিযুদ্ধের জাতীয় স্মারক হিসেবে সরকারি পর্যটন উৎস ও জাতীয় জ্ঞানকোষে একই সত্তা হিসেবে নথিভুক্ত।</p>
+      </div>
+      <figure class="overflow-hidden rounded-3xl border border-white/20 bg-black/15">
+        <img src="/images/smritisoudho-detail.jpg" alt="জাতীয় স্মৃতিসৌধের কংক্রিট ত্রিভুজাকার প্রাচীরের কাছ থেকে দেখা অংশ" width="1280" height="853" loading="lazy" class="aspect-[16/10] w-full object-cover" />
+      </figure>
+    </div>
+  </section>
+
+  <section id="জিজ্ঞাসা" class="container-shell py-18 sm:py-24">
+    <div class="mx-auto max-w-4xl">
+      <p class="section-kicker">সাধারণ প্রশ্ন</p>
+      <h2 class="mt-3 text-4xl font-black sm:text-5xl">ভ্রমণের আগে যা জানা ভালো</h2>
+      <div class="mt-9 divide-y divide-black/10 border-y border-black/10">
+        {faq.map((item, i) => (
+          <details class="group py-6" open={i === 0}>
+            <summary class="focus-ring flex cursor-pointer list-none items-start justify-between gap-6 rounded-lg text-lg font-black">
+              <span>{item.q}</span><span aria-hidden="true" class="text-[#8a2e2a] transition group-open:rotate-45">＋</span>
+            </summary>
+            <p class="mt-4 max-w-3xl leading-8 text-[#505a54]">{item.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="container-shell pb-6">
+    <div class="rounded-[2rem] bg-[#ded6c9] p-7 sm:p-10">
+      <p class="section-kicker">ছবি ও লাইসেন্স</p>
+      <h2 class="mt-2 text-2xl font-black">এই সাইটের স্থানীয় ছবি-সম্পদ</h2>
+      <p class="mt-4 max-w-4xl leading-7 text-[#505a54]">ওয়েবসাইটে ব্যবহৃত সব JPG ফাইল প্রকল্পের public/images ফোল্ডারে স্থানীয়ভাবে রাখা হয়েছে, তাই পৃষ্ঠা দেখানোর জন্য কোনো বাহ্যিক ছবি-হোস্টের ওপর নির্ভর করতে হয় না। যাচাইকৃত বাস্তব আলোকচিত্রের উৎস ও প্রতিস্থাপন নির্দেশনা প্রকল্পের IMAGE-CREDITS.md নথিতে রাখা হয়েছে।</p>
+    </div>
+  </section>
+</BaseLayout>

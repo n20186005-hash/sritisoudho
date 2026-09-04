@@ -1,0 +1,16 @@
+---
+import BaseLayout from './BaseLayout.astro';
+interface Props { title: string; description: string; }
+const { title, description } = Astro.props;
+---
+<BaseLayout title={`${title} | জাতীয় স্মৃতিসৌধ দর্শনার্থী গাইড`} description={description}>
+  <section class="container-shell py-14 sm:py-20">
+    <div class="mx-auto max-w-3xl">
+      <a href="/" class="text-sm font-bold text-[#8a2e2a]">← প্রথম পাতায় ফিরে যান</a>
+      <p class="section-kicker mt-10">নীতি ও তথ্য</p>
+      <h1 class="mt-3 text-4xl font-black tracking-tight sm:text-5xl">{title}</h1>
+      <p class="mt-4 text-sm text-[#5d665f]">সর্বশেষ হালনাগাদ: সেপ্টেম্বর ২০২৬</p>
+      <div class="prose-bn mt-10 space-y-9"><slot /></div>
+    </div>
+  </section>
+</BaseLayout>

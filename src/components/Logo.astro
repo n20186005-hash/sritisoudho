@@ -1,0 +1,13 @@
+---
+interface Props { compact?: boolean; }
+const { compact = false } = Astro.props;
+---
+<div class="inline-flex items-center gap-3" aria-label="জাতীয় স্মৃতিসৌধ দর্শনার্থী গাইড">
+  <svg class={compact ? 'h-9 w-9' : 'h-11 w-11'} viewBox="0 0 64 64" role="img" aria-hidden="true">
+    <rect width="64" height="64" rx="14" fill="#173d30"/>
+    <path d="M32 8 17 47h8L32 20l7 27h8L32 8Z" fill="#eee8dc"/>
+    <path d="M32 14 12 47h8L32 27l12 20h8L32 14Z" fill="#b23a34" fill-opacity=".96"/>
+    <path d="M12 50h40" stroke="#eee8dc" stroke-width="2.5" stroke-linecap="round"/>
+  </svg>
+  <span class={compact ? 'text-base font-bold leading-tight' : 'text-lg font-bold leading-tight'}>জাতীয় স্মৃতিসৌধ<br/><span class="text-[.72em] font-medium opacity-70">দর্শনার্থী গাইড</span></span>
+</div>
