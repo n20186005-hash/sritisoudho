@@ -12,6 +12,8 @@
 }
 
 html { scroll-behavior: smooth; background: var(--paper); }
+/* স্টিকি হেডারের নিচে অ্যাংকর-সেকশন লুকিয়ে না যাওয়ার জন্য */
+[id] { scroll-margin-top: 6rem; }
 body {
   margin: 0;
   min-width: 320px;

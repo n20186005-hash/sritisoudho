@@ -1,8 +1,16 @@
 ---
+import { anchors } from '../data/anchors';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ArchitectureSection from '../components/ArchitectureSection.astro';
+import FacilitiesSection from '../components/FacilitiesSection.astro';
+import StoriesSection from '../components/StoriesSection.astro';
+import Weather from '../components/Weather.astro';
+import SourcesSection from '../components/SourcesSection.astro';
 
 const homeUrl = Astro.site ? new URL('/', Astro.site).href : undefined;
 const heroUrl = Astro.site ? new URL('/images/smritisoudho-reflection.jpg', Astro.site).href : undefined;
+const title = 'জাতীয় স্মৃতিসৌধ (সাভার) | National Martyrs’ Monument Visitor Guide';
+const description = 'জাতীয় স্মৃতিসৌধ (National Martyrs’ Monument) সাভার, ঢাকা, বাংলাদেশে অবস্থিত। ইতিহাস, স্থাপত্য, খোলার সময়, যাতায়াত, সুবিধা, আবহাওয়া, মানচিত্র ও সাধারণ প্রশ্নসহ সম্পূর্ণ দর্শনার্থী গাইড।';
 
 const faq = [
   {
@@ -24,17 +32,31 @@ const faq = [
   {
     q: '২৬ মার্চ বা ১৬ ডিসেম্বর গেলে কী জানা দরকার?',
     a: 'জাতীয় দিবসে স্মৃতিসৌধে আনুষ্ঠানিক শ্রদ্ধা নিবেদন, অতিরিক্ত ভিড় ও নিরাপত্তা নিয়ন্ত্রণ থাকতে পারে। নীরব পরিবেশে দেখতে চাইলে অন্য দিন বেছে নেওয়া সুবিধাজনক; জাতীয় দিবসে গেলে বাড়তি সময় হাতে রাখুন।'
+  },
+  {
+    q: 'এলাকায় শৌচাগার, খাবার, পার্কিং বা থাকার ব্যবস্থা আছে?',
+    a: 'প্রাঙ্গণ মূলত খোলা জনস্থান; পার্কিং মূলত ব্যবস্থাপনার নির্ধারিত এলাকায়, আর নবীনগর বাসস্ট্যান্ড, সাভার বাজার ও মহাসড়কসংলগ্ন দোকান/বাজারে খাবার, দৈনন্দিন জিনিস, জ্বালানি ও সম্ভাব্য শৌচাগার পাওয়া যায়। প্রাঙ্গণের ভেতরে রাত্রিযাপনের ব্যবস্থা নেই। এগুলো ধরনভিত্তিক সাধারণ তথ্য—নির্দিষ্ট প্রতিষ্ঠান নয়; খোলা সময়-ফি যাওয়ার আগে যাচাই করে নিন।'
+  },
+  {
+    q: 'কোন মৌসুমে যাওয়া ভালো?',
+    a: 'নভেম্বর থেকে ফেব্রুয়ারির শীতকাল সাধারণত সবচেয়ে আরামদায়ক; মার্চ–জুনে গরম ও আর্দ্রতা বেশি, আর জুন–অক্টোবরে বর্ষা-বৃষ্টি হয়। দিনের মধ্যে সকাল ও শেষ বিকেল তুলনামূলক ভালো। হালনাগাদ তাপমাত্রা ও ৭ দিনের পূর্বাভাস এই পাতার আবহাওয়া অংশে দেখা যায়।'
+  },
+  {
+    q: 'সাত জোড়া প্রাচীর কেন? স্মৃতিসৌধের অর্থ কী?',
+    a: 'মূল কাঠামোর ক্রমশ উঁচু হতে থাকা সাত জোড়া ত্রিভুজাকার প্রাচীর বাংলাদেশের স্বাধীনতা-সংগ্রামের সাতটি অধ্যায়কে স্মরণ করায়—১৯৫২-এর ভাষা আন্দোলন, ১৯৫৪-এর যুক্তফ্রন্ট নির্বাচন, ১৯৫৬-এর শাসনতান্ত্রিক আন্দোলন, ১৯৬২-এর শিক্ষা আন্দোলন, ১৯৬৬-এর ছয় দফা, ১৯৬৯-এর গণঅভ্যুত্থান ও ১৯৭১-এর মুক্তিযুদ্ধ। উচ্চতা ক্রমে বৃদ্ধি পেয়ে প্রায় ১৫০ ফুটের শীর্ষে মিলিত হওয়া এই নকশা দেশের দীর্ঘ সংগ্রামের ধারাবাহিকতাকে প্রতিফলিত করে।'
   }
 ];
 
 const attraction: Record<string, unknown> = {
   '@context': 'https://schema.org',
-  '@type': ['TouristAttraction', 'LocalBusiness'],
+  '@type': ['TouristAttraction', 'LandmarksOrHistoricalBuildings'],
+  ...(homeUrl ? { '@id': homeUrl + '#attraction' } : {}),
   name: 'জাতীয় স্মৃতিসৌধ',
-  alternateName: 'National Martyrs’ Monument',
+  alternateName: ['National Martyrs’ Monument', 'Jatiyo Smriti Soudho'],
   description: 'সাভারে অবস্থিত বাংলাদেশের মুক্তিযুদ্ধের শহীদদের স্মরণে নির্মিত জাতীয় স্মৃতিসৌধের স্বাধীন দর্শনার্থী তথ্য-গাইড।',
   ...(homeUrl ? { url: homeUrl } : {}),
   ...(heroUrl ? { image: [heroUrl] } : {}),
+  ...(homeUrl ? { hasMap: 'https://maps.app.goo.gl/kfUxNKYsDusuGj9f6' } : {}),
   address: {
     '@type': 'PostalAddress',
     streetAddress: 'ঢাকা–আরিচা মহাসড়ক, নবীনগর',
@@ -45,8 +67,8 @@ const attraction: Record<string, unknown> = {
   },
   geo: {
     '@type': 'GeoCoordinates',
-    latitude: 23.9113,
-    longitude: 90.2547
+    latitude: 23.911298478561065,
+    longitude: 90.2522003771468
   },
   openingHoursSpecification: [{
     '@type': 'OpeningHoursSpecification',
@@ -58,6 +80,7 @@ const attraction: Record<string, unknown> = {
   aggregateRating: {
     '@type': 'AggregateRating',
     ratingValue: '4.6',
+    reviewCount: 23481,
     bestRating: '5'
   },
   sameAs: [
@@ -76,24 +99,50 @@ const faqSchema = {
     acceptedAnswer: { '@type': 'Answer', text: item.a }
   }))
 };
+
+const orgSchema: Record<string, unknown> = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'জাতীয় স্মৃতিসৌধ দর্শনার্থী গাইড',
+  url: homeUrl,
+  ...(homeUrl ? { logo: new URL('/logo.svg', homeUrl).href } : {}),
+  description: 'বাংলা ভাষার স্বাধীন, অলাভজনক দর্শনার্থী তথ্য-গাইড—সাভারের জাতীয় স্মৃতিসৌধের ইতিহাস, স্থাপত্য, যাতায়াত ও ভ্রমণ-পরিকল্পনা।'
+};
+
+const webpageSchema: Record<string, unknown> = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  url: homeUrl,
+  name: title,
+  description,
+  inLanguage: 'bn-BD',
+  dateModified: '2026-09-04',
+  isPartOf: {
+    '@type': 'WebSite',
+    name: 'জাতীয় স্মৃতিসৌধ দর্শনার্থী গাইড',
+    url: homeUrl
+  },
+  ...(heroUrl ? { primaryImageOfPage: heroUrl } : {})
+};
 ---
 <BaseLayout
-  title="জাতীয় স্মৃতিসৌধ, সাভার | ইতিহাস, যাতায়াত ও দর্শনার্থী গাইড"
-  description="সাভারের জাতীয় স্মৃতিসৌধ ভ্রমণের বাংলা গাইড—ইতিহাস, স্থাপত্য, প্রবেশ, যাতায়াত, পার্কিং, আশপাশ, খাবার ও সাধারণ প্রশ্ন।"
-  jsonLd={[attraction, faqSchema]}
+  title={title}
+  description={description}
+  jsonLd={[attraction, faqSchema, orgSchema, webpageSchema]}
 >
   <section class="relative min-h-[78vh] overflow-hidden bg-[#14251e] text-white">
-    <img src="/images/smritisoudho-reflection.jpg" alt="জাতীয় স্মৃতিসৌধ ও সামনের প্রতিফলন-পুকুর" class="absolute inset-0 h-full w-full object-cover" width="1280" height="853" fetchpriority="high" />
+    <img src="/images/smritisoudho-reflection.jpg" alt="জাতীয় স্মৃতিসৌধ ও সামনের প্রতিফলন-পুকুর" class="absolute inset-0 h-full w-full object-cover" width="1280" height="853" />
     <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/45 to-black/15"></div>
     <div class="absolute inset-0 bg-gradient-to-t from-[#14251e] via-transparent to-transparent"></div>
     <div class="container-shell relative flex min-h-[78vh] items-end py-14 sm:py-20">
       <div class="max-w-4xl">
         <p class="mb-5 inline-flex rounded-full border border-white/30 bg-black/25 px-4 py-2 text-sm font-semibold backdrop-blur">সাভার · ঢাকা · বাংলাদেশের জাতীয় স্মারক</p>
-        <h1 class="text-5xl font-black leading-[1.06] tracking-tight sm:text-7xl lg:text-8xl">জাতীয়<br/>স্মৃতিসৌধ</h1>
-        <p class="mt-6 max-w-2xl text-lg leading-8 text-white/84 sm:text-xl">মুক্তিযুদ্ধে শহীদদের প্রতি জাতির শ্রদ্ধার স্থাপত্য—সাত জোড়া ত্রিভুজাকার প্রাচীর, প্রতিফলন-পুকুর, উদ্যান এবং স্মৃতির এক নীরব অক্ষ।</p>
+        <h1 class="text-5xl font-black leading-[1.06] tracking-tight sm:text-7xl lg:text-8xl">জাতীয়<br/>স্মৃতিসৌধ
+<span class="mt-4 block text-2xl font-black leading-snug tracking-normal sm:text-3xl">(সাভার, বাংলাদেশ)</span></h1>
+        <p class="mt-6 max-w-2xl text-lg leading-8 text-white/84 sm:text-xl">জাতীয় স্মৃতিসৌধ আন্তর্জাতিকভাবে <strong class="font-bold text-white">National Martyrs’ Monument</strong> নামেও পরিচিত। ১৯৭১ সালের মুক্তিযুদ্ধে শহীদদের প্রতি জাতির শ্রদ্ধার এই স্থাপত্যে সাত জোড়া ত্রিভুজাকার প্রাচীর, প্রতিফলন-পুকুর, উদ্যান ও স্মৃতির এক নীরব অক্ষ রয়েছে।</p>
         <div class="mt-8 flex flex-wrap gap-3">
-          <a href="#ভ্রমণ" class="focus-ring rounded-full bg-[#b53a35] px-6 py-3 font-bold text-white no-underline hover:bg-[#9d302c]">ভ্রমণ পরিকল্পনা</a>
-          <a href="#যাতায়াত" class="focus-ring rounded-full border border-white/35 bg-white/10 px-6 py-3 font-bold text-white no-underline backdrop-blur hover:bg-white/20">কীভাবে যাবেন</a>
+          <a href={'#' + anchors.visit} class="focus-ring rounded-full bg-[#b53a35] px-6 py-3 font-bold text-white no-underline hover:bg-[#9d302c]">ভ্রমণ পরিকল্পনা</a>
+          <a href={'#' + anchors.transport} class="focus-ring rounded-full border border-white/35 bg-white/10 px-6 py-3 font-bold text-white no-underline backdrop-blur hover:bg-white/20">কীভাবে যাবেন</a>
         </div>
       </div>
     </div>
@@ -104,11 +153,11 @@ const faqSchema = {
       <div class="px-4 py-3"><p class="text-xs font-bold text-[#8a2e2a]">অবস্থান</p><p class="mt-1 font-bold">নবীনগর, সাভার</p></div>
       <div class="px-4 py-3"><p class="text-xs font-bold text-[#8a2e2a]">ঢাকা থেকে</p><p class="mt-1 font-bold">প্রায় ৩৫ কিলোমিটার</p></div>
       <div class="px-4 py-3"><p class="text-xs font-bold text-[#8a2e2a]">মূল কাঠামোর উচ্চতা</p><p class="mt-1 font-bold">প্রায় ১৫০ ফুট</p></div>
-      <div class="px-4 py-3"><p class="text-xs font-bold text-[#8a2e2a]">মানচিত্রের রেটিং</p><p class="mt-1 font-bold">৪.৬ / ৫ <span class="font-normal text-black/55">পরিবর্তনশীল</span></p></div>
+      <div class="px-4 py-3"><p class="text-xs font-bold text-[#8a2e2a]">মানচিত্রের রেটিং</p><p class="mt-1 font-bold">৪.৬ / ৫ <span class="font-normal text-black/55">· ২৩,৪৮১ রিভিউ · পরিবর্তনশীল</span></p></div>
     </div>
   </section>
 
-  <section id="স্মৃতি" class="memorial-lines container-shell py-18 sm:py-24">
+  <section id={anchors.memory} class="memorial-lines container-shell py-18 sm:py-24">
     <div class="relative grid gap-12 lg:grid-cols-[.9fr_1.1fr] lg:items-center">
       <div>
         <p class="section-kicker">স্মৃতি ও স্থাপত্য</p>
@@ -140,7 +189,9 @@ const faqSchema = {
     </div>
   </section>
 
-  <section id="ভ্রমণ" class="bg-[#173d30] py-18 text-white sm:py-24">
+  <ArchitectureSection />
+
+  <section id={anchors.visit} class="bg-[#173d30] py-18 text-white sm:py-24">
     <div class="container-shell">
       <p class="text-sm font-bold tracking-wider text-[#e1b7a8]">দর্শনার্থী পরিকল্পনা</p>
       <h2 class="mt-3 max-w-3xl text-4xl font-black sm:text-5xl">শ্রদ্ধাশীল, ধীরস্থির একটি সফর</h2>
@@ -168,7 +219,7 @@ const faqSchema = {
     </div>
   </section>
 
-  <section id="যাতায়াত" class="border-y border-black/10 bg-[#e7dfd2] py-18 sm:py-24">
+  <section id={anchors.transport} class="border-y border-black/10 bg-[#e7dfd2] py-18 sm:py-24">
     <div class="container-shell grid gap-12 lg:grid-cols-[.9fr_1.1fr]">
       <div>
         <p class="section-kicker">বিস্তারিত যাতায়াত</p>
@@ -196,7 +247,9 @@ const faqSchema = {
     </div>
   </section>
 
-  <section id="আশপাশ" class="container-shell py-18 sm:py-24">
+  <FacilitiesSection />
+
+  <section id={anchors.nearby} class="container-shell py-18 sm:py-24">
     <div class="max-w-3xl">
       <p class="section-kicker">আশপাশে সময় কাটানো</p>
       <h2 class="mt-3 text-4xl font-black sm:text-5xl">খাবার ও কাছাকাছি দেখার জায়গা</h2>
@@ -229,7 +282,7 @@ const faqSchema = {
       <div>
         <p class="text-sm font-bold text-white/70">ভূগোল দিয়ে পরিচয় নিশ্চিত করুন</p>
         <h2 class="mt-2 text-3xl font-black sm:text-4xl">নবীনগর, সাভার · ঢাকা জেলা · বাংলাদেশ</h2>
-        <p class="mt-4 max-w-3xl leading-8 text-white/78">স্মৃতিসৌধটি ঢাকা–আরিচা মহাসড়কের পাশে সাভার উপজেলার নবীনগরে। কেন্দ্রীয় অবস্থান আনুমানিক ২৩.৯১১৩° উত্তর, ৯০.২৫৪৭° পূর্ব। এটি বাংলাদেশের মুক্তিযুদ্ধের জাতীয় স্মারক হিসেবে সরকারি পর্যটন উৎস ও জাতীয় জ্ঞানকোষে একই সত্তা হিসেবে নথিভুক্ত।</p>
+        <p class="mt-4 max-w-3xl leading-8 text-white/78">স্মৃতিসৌধটি ঢাকা–আরিচা মহাসড়কের পাশে সাভার উপজেলার নবীনগরে। কেন্দ্রীয় অবস্থান আনুমানিক ২৩.৯১১৩° উত্তর, ৯০.২৫২২° পূর্ব। এটি বাংলাদেশের মুক্তিযুদ্ধের জাতীয় স্মারক হিসেবে সরকারি পর্যটন উৎস ও জাতীয় জ্ঞানকোষে একই সত্তা হিসেবে নথিভুক্ত।</p>
       </div>
       <figure class="overflow-hidden rounded-3xl border border-white/20 bg-black/15">
         <img src="/images/smritisoudho-detail.jpg" alt="জাতীয় স্মৃতিসৌধের কংক্রিট ত্রিভুজাকার প্রাচীরের কাছ থেকে দেখা অংশ" width="1280" height="853" loading="lazy" class="aspect-[16/10] w-full object-cover" />
@@ -237,7 +290,11 @@ const faqSchema = {
     </div>
   </section>
 
-  <section id="জিজ্ঞাসা" class="container-shell py-18 sm:py-24">
+  <StoriesSection />
+
+  <Weather />
+
+  <section id={anchors.faq} class="container-shell py-18 sm:py-24">
     <div class="mx-auto max-w-4xl">
       <p class="section-kicker">সাধারণ প্রশ্ন</p>
       <h2 class="mt-3 text-4xl font-black sm:text-5xl">ভ্রমণের আগে যা জানা ভালো</h2>
@@ -253,6 +310,8 @@ const faqSchema = {
       </div>
     </div>
   </section>
+
+  <SourcesSection />
 
   <section class="container-shell pb-6">
     <div class="rounded-[2rem] bg-[#ded6c9] p-7 sm:p-10">

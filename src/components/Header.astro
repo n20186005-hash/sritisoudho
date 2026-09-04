@@ -1,16 +1,20 @@
 ---
+import { anchors } from '../data/anchors';
 import Logo from './Logo.astro';
 ---
 <header class="sticky top-0 z-50 border-b border-black/10 bg-[#f4f0e8]/95 backdrop-blur">
   <div class="container-shell flex min-h-18 items-center justify-between gap-5 py-3">
-    <a href="/" class="focus-ring rounded-lg no-underline" aria-label="প্রথম পাতায় ফিরে যান"><Logo compact /></a>
-    <nav aria-label="প্রধান নেভিগেশন" class="hidden items-center gap-5 text-sm font-semibold lg:flex">
-      <a class="focus-ring rounded hover:text-[#8a2e2a]" href="/#স্মৃতি">ইতিহাস</a>
-      <a class="focus-ring rounded hover:text-[#8a2e2a]" href="/#ভ্রমণ">ভ্রমণ পরিকল্পনা</a>
-      <a class="focus-ring rounded hover:text-[#8a2e2a]" href="/#যাতায়াত">যাতায়াত</a>
-      <a class="focus-ring rounded hover:text-[#8a2e2a]" href="/#আশপাশ">আশপাশ</a>
-      <a class="focus-ring rounded hover:text-[#8a2e2a]" href="/#জিজ্ঞাসা">সাধারণ প্রশ্ন</a>
+    <a href="/" class="focus-ring rounded-lg no-underline" aria-label="প্রথম পাতায় ফিরে যান"><Logo compact /></a>
+    <nav aria-label="প্রধান নেভিগেশন" class="hidden items-center gap-3.5 text-[13px] font-semibold xl:flex">
+      <a class="focus-ring rounded hover:text-[#8a2e2a]" href={'/#' + anchors.memory}>ইতিহাস</a>
+      <a class="focus-ring rounded hover:text-[#8a2e2a]" href={'/#' + anchors.architecture}>স্থাপত্য</a>
+      <a class="focus-ring rounded hover:text-[#8a2e2a]" href={'/#' + anchors.visit}>ভ্রমণ</a>
+      <a class="focus-ring rounded hover:text-[#8a2e2a]" href={'/#' + anchors.facilities}>সুবিধা</a>
+      <a class="focus-ring rounded hover:text-[#8a2e2a]" href={'/#' + anchors.transport}>যাতায়াত</a>
+      <a class="focus-ring rounded hover:text-[#8a2e2a]" href={'/#' + anchors.nearby}>আশপাশ</a>
+      <a class="focus-ring rounded hover:text-[#8a2e2a]" href={'/#' + anchors.weather}>আবহাওয়া</a>
+      <a class="focus-ring rounded hover:text-[#8a2e2a]" href={'/#' + anchors.faq}>প্রশ্ন</a>
     </nav>
-    <a href="https://maps.app.goo.gl/kfUxNKYsDusuGj9f6" rel="noopener noreferrer" target="_blank" class="focus-ring rounded-full bg-[#173d30] px-4 py-2 text-sm font-bold text-white no-underline hover:bg-[#0f2d23]">মানচিত্র খুলুন</a>
+    <a href="https://maps.app.goo.gl/kfUxNKYsDusuGj9f6" rel="noopener noreferrer" target="_blank" class="focus-ring rounded-full bg-[#173d30] px-4 py-2 text-[13px] font-bold text-white no-underline hover:bg-[#0f2d23]">মানচিত্র খুলুন</a>
   </div>
 </header>

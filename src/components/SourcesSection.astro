@@ -1,0 +1,62 @@
+---
+import { anchors } from '../data/anchors';
+
+const sources = [
+  {
+    name: 'সাভার উপজেলা প্রশাসন',
+    desc: 'পর্যটন আকর্ষণ তালিকায় জাতীয় স্মৃতিসৌধের অবস্থান ও স্থানীয় তথ্য।',
+    url: 'https://savar.dhaka.gov.bd/pages/tourist-spot/697f940935ce18e1c06b73cd'
+  },
+  {
+    name: 'বাংলাদেশ ট্যুরিজম বোর্ড · Beautiful Bangladesh',
+    desc: 'জাতীয় পর্যায়ের সরকারি পর্যটন তথ্যে স্মৃতিসৌধের আনুষ্ঠানিক তালিকাভুক্তি।',
+    url: 'https://beautifulbangladesh.gov.bd/loc/dhaka/93'
+  },
+  {
+    name: 'বাংলাপিডিয়া',
+    desc: 'বাংলাদেশ এশিয়াটিক সোসাইটির জাতীয় জ্ঞানকোষে স্মৃতিসৌধের পটভূমি ও নির্মাণ-ইতিহাস।',
+    url: 'https://bn.banglapedia.org/index.php?title=জাতীয়_স্মৃতিসৌধ'
+  }
+];
+---
+<section id={anchors.sources} class="container-shell py-18 sm:py-24">
+  <div class="mx-auto max-w-5xl">
+    <p class="section-kicker">তথ্যসূত্র ও যাচাই-নীতি</p>
+    <h2 class="mt-3 text-4xl font-black leading-tight sm:text-5xl">কোন তথ্য থেকে, কীভাবে লেখা</h2>
+    <p class="mt-6 max-w-4xl text-lg leading-8 text-[#505a54]">
+      এটি একটি স্বাধীন, অলাভজনক দর্শনার্থী তথ্য-গাইড প্রকল্প। এখানে কোনো সরকারি সংস্থার প্রাতিষ্ঠানিক বক্তব্য নেই,
+      কোনো বাণিজ্যিক সুপারিশও নেই; নিচের প্রকাশ্য সরকারি ও জ্ঞানকোষীয় উৎসগুলোর সঙ্গে মিলিয়ে ইতিহাস, যাতায়াত,
+      সুবিধা ও পরিকল্পনা-সংক্রান্ত সাধারণ তথ্য দেওয়া হয়েছে। প্রাঙ্গণ-ব্যবস্থাপনার খোলা সময় বা নিয়ম বদলাতে পারে,
+      তাই গুরুত্বপূর্ণ সফরের আগে উপজেলা প্রশাসন বা পর্যটন বোর্ডের সর্বশেষ ঘোষণা দেখে নেওয়া ভালো।
+    </p>
+
+    <div class="mt-9 grid gap-4 md:grid-cols-3">
+      {sources.map((s) => (
+        <a
+          href={s.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="card focus-ring rounded-3xl p-6 no-underline transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-black/10"
+        >
+          <p class="text-xs font-black tracking-wider text-[#8a2e2a]">প্রামাণ্য উৎস</p>
+          <h3 class="mt-2 text-lg font-black leading-6 text-[#15221b]">{s.name}</h3>
+          <p class="mt-3 text-sm leading-7 text-[#566059]">{s.desc}</p>
+          <span class="mt-4 inline-flex items-center gap-1 text-sm font-bold text-[#8a2e2a]">উৎস খুলুন <span aria-hidden="true">→</span></span>
+        </a>
+      ))}
+    </div>
+
+    <div class="mt-8 grid gap-4 lg:grid-cols-2">
+      <div class="rounded-3xl border border-black/10 bg-[#eee8dc] p-6 text-sm leading-7 text-[#4d5751]">
+        <strong class="block text-[#15221b]">রেটিং-এর ব্যাখ্যা</strong>
+        মানচিত্র/Google-এ প্রকাশ্য দর্শনার্থী রেটিং বর্তমানে ৪.৬ (প্রায় ২৩,৪৮১টি রিভিউ)। এটি কোনো সরকারি মূল্যায়ন নয়
+        এবং সময়ের সঙ্গে বদলাতে পারে; এখানে তথ্যবিন্দু হিসেবেই দেখানো হয়েছে।
+      </div>
+      <div class="rounded-3xl border border-black/10 bg-[#eee8dc] p-6 text-sm leading-7 text-[#4d5751]">
+        <strong class="block text-[#15221b]">ছবি ও হালনাগাদ</strong>
+        পৃষ্ঠায় ব্যবহৃত স্থানীয় ছবি-সম্পদের উৎস ও প্রতিস্থাপন নির্দেশনা IMAGE-CREDITS.md নথিতে আছে।
+        সর্বশেষ হালনাগাদ: ৪ সেপ্টেম্বর ২০২৬ · সাভার, ঢাকা, বাংলাদেশ।
+      </div>
+    </div>
+  </div>
+</section>

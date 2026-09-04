@@ -8,11 +8,20 @@ interface Props {
   title: string;
   description: string;
   image?: string;
+  imageAlt?: string;
   noindex?: boolean;
   jsonLd?: Record<string, unknown> | Array<Record<string, unknown>>;
 }
 
-const { title, description, image = '/images/smritisoudho-reflection.jpg', noindex = false, jsonLd } = Astro.props;
+const {
+  title,
+  description,
+  image = '/images/smritisoudho-reflection.jpg',
+  imageAlt = 'জাতীয় স্মৃতিসৌধ ও সামনের প্রতিফলন-পুকুর — সাভার, ঢাকা, বাংলাদেশ',
+  noindex = false,
+  jsonLd
+} = Astro.props;
+const siteName = 'জাতীয় স্মৃতিসৌধ দর্শনার্থী গাইড';
 const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
 const ogImage = Astro.site ? new URL(image, Astro.site).href : undefined;
 ---
@@ -28,21 +37,31 @@ const ogImage = Astro.site ? new URL(image, Astro.site).href : undefined;
     {canonical && <link rel="canonical" href={canonical} />}
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="bn_BD" />
+    <meta property="og:site_name" content={siteName} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     {canonical && <meta property="og:url" content={canonical} />}
     {ogImage && <meta property="og:image" content={ogImage} />}
+    {ogImage && <meta property="og:image:alt" content={imageAlt} />}
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     {ogImage && <meta name="twitter:image" content={ogImage} />}
+    {ogImage && <meta name="twitter:image:alt" content={imageAlt} />}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
-    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+    {jsonLd && <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />}
     <CookieAnalytics />
+    <script is:inline>
+      if ('serviceWorker' in navigator && !/^localhost$|^127\./.test(location.hostname)) {
+        window.addEventListener('load', function () {
+          navigator.serviceWorker.register('/sw.js').catch(function () { /* PWA 是渐进增强 */ });
+        });
+      }
+    </script>
   </head>
   <body>
     <a href="#মূল-বিষয়" class="focus-ring fixed left-3 top-3 z-[100] -translate-y-24 rounded bg-white px-4 py-2 font-bold shadow focus:translate-y-0">মূল বিষয়ে যান</a>
