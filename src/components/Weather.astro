@@ -1,10 +1,31 @@
 ---
 import { anchors } from '../data/anchors';
+import { buildNowHtml, buildDaysHtml, buildAdviceHtml, WX_API_URL } from '../data/weather';
 // সাভার/জাতীয় স্মৃতিসৌধ (২৩.৯১১৩°উ, ৯০.২৫২২°পূ) এর জন্য আবহাওয়া মডিউল।
-// এই সাইটটি স্ট্যাটিক হোস্টিংয়ে চলে (কোনো সার্ভার রানটাইম নেই), তাই রানটাইম ডেটা
-// ব্রাউজার থেকে সরাসরি Open-Meteo (মুক্ত, কী ছাড়া, CORS-সমর্থিত) থেকে আনা হয় এবং
-// localStorage-এ ৩০ মিনিট ক্যাশ থাকে (বারবার রিকোয়েস্ট হয় না)।
-// JavaScript বন্ধ থাকলেও নিচের স্থির মৌসুম-পরামর্শ অংশ সর্বদা দেখা যায়।
+// ডিজাইন নোট (শুধু কোডারদের জন্য, পৃষ্ঠার দর্শনার্থীদের কাছে দেখানো হয় না):
+// 1) সার্ভার-সাইড: বিল্ড/রেন্ডার-সময় Open-Meteo থেকে বর্তমান + ৭ দিনের পূর্বাভাস
+//    (UV/বৃষ্টি-সম্ভাবনা/সতর্কবার্তাসহ) নিয়ে স্ট্যাটিক HTML-এ SSR হিসেবে বসানো হয়।
+// 2) ক্লায়েন্ট-সাইড: পেজ খোলার পর ৩০ মিনিটের স্থানীয় ক্যাশসহ সাম্প্রতিক ডেটা রিফ্রেশ হয়।
+// 3) ভিজিটর-পরামর্শ ব্লকটি wxAdvice()/buildAdviceHtml() দিয়ে তৈরি — শুধু প্রাসঙ্গিক শর্তে
+//    প্রাসঙ্গিক পরামর্শ রেন্ডার হয় (খোলা প্রাঙ্গণ-অভিযোজিত), কোনো কারিগরি শব্দ/API নাম নয়।
+// 4) সাধারণ দর্শনার্থীকে API-এর নাম/মুক্ত/কী-বিহীন ইত্যাদি কারিগরি বিবরণ দেখানো হয় না।
+
+// বিল্ড-টাইম সার্ভার ফেচ: সফল হলে নিচে প্রাথমিক পূর্বাভাস সহ স্ট্যাটিক HTML তৈরি হয়;
+// নেটওয়ার্ক অনুপলব্ধ/টাইমআউট হলে বিল্ড কখনো ব্যর্থ হয় না — কেবল প্রাথমিক ডেটা খালি থাকে।
+let serverData: Record<string, unknown> | null = null;
+try {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 7000);
+  try {
+    const res = await fetch(WX_API_URL, { signal: controller.signal });
+    if (res.ok) serverData = await res.json();
+  } finally {
+    clearTimeout(timer);
+  }
+} catch {
+  serverData = null;
+}
+
 const seasons = [
   {
     label: 'নভেম্বর–ফেব্রুয়ারি · শীত',
@@ -22,87 +43,116 @@ const seasons = [
     body: 'মৌসুমি বৃষ্টিতে আঙিনা ভিজে থাকে; ছাতা/রেইনকোট রাখুন, ভেজা পথে সতর্ক হাঁটুন। মেঘলা আলোয় ছবিও সুন্দর হয়।'
   }
 ];
+
+const initialNowHtml = serverData && (serverData as any).current ? buildNowHtml(serverData) : '';
+const initialDaysHtml = serverData && (serverData as any).daily ? buildDaysHtml(serverData) : '';
+const initialAdviceHtml = serverData && (serverData as any).current ? buildAdviceHtml(serverData) : '';
 ---
-<section id={anchors.weather} class="container-shell py-18 sm:py-24">
-  <div class="max-w-3xl">
-    <p class="section-kicker">আবহাওয়া ও পরিকল্পনা</p>
-    <h2 class="mt-3 text-4xl font-black leading-tight sm:text-5xl">এখনকার আবহাওয়া ও ৭ দিনের পূর্বাভাস</h2>
-    <p class="mt-5 text-lg leading-8 text-[#505a54]">সাভার এলাকার স্থানাঙ্ক (২৩.৯১°উ, ৯০.২৫°পূ) থেকে Open-Meteo-র বিনামূল্যের ডেটা ব্যবহার করা হয়। স্মৃতিসৌধ মূলত খোলা প্রাঙ্গণ, তাই বৃষ্টি বা প্রচণ্ড গরমের দিনে পরিকল্পনা বদলে নেওয়া ভালো।</p>
-  </div>
+<section id={anchors.weather} class="border-y border-black/10 bg-[#eef0ea] py-18 sm:py-24">
+  <div class="container-shell">
+    <div class="max-w-3xl">
+      <p class="section-kicker">আবহাওয়া ও পরিকল্পনা</p>
+      <h2 class="mt-3 text-4xl font-black leading-tight sm:text-5xl">এখনকার আবহাওয়া ও ৭ দিনের পূর্বাভাস</h2>
+      <p class="mt-5 text-lg leading-8 text-[#505a54]">সাভার এলাকার (২৩.৯১°উ, ৯০.২৫°পূ) হালনাগাদ আবহাওয়া ও আগামী ৭ দিনের পূর্বাভাস এখানে দেখানো হয়েছে। স্মৃতিসৌধ মূলত খোলা প্রাঙ্গণ, তাই বৃষ্টি বা প্রচণ্ড গরমের দিনে পরিকল্পনা বদলে নেওয়া ভালো।</p>
+    </div>
 
-  <div class="mt-9 grid gap-4 md:grid-cols-3">
-    {seasons.map((s) => (
-      <div class="card rounded-3xl p-6">
-        <p class="text-xs font-black tracking-wide text-[#8a2e2a]">{s.label}</p>
-        <h3 class="mt-2 text-lg font-black">{s.title}</h3>
-        <p class="mt-2 text-sm leading-7 text-[#505a54]">{s.body}</p>
+    <div class="mt-9 grid gap-4 md:grid-cols-3">
+      {seasons.map((s) => (
+        <div class="card rounded-3xl p-6">
+          <p class="text-xs font-black tracking-wide text-[#8a2e2a]">{s.label}</p>
+          <h3 class="mt-2 text-lg font-black">{s.title}</h3>
+          <p class="mt-2 text-sm leading-7 text-[#505a54]">{s.body}</p>
+        </div>
+      ))}
+    </div>
+
+    <div class="mt-8 grid gap-5 lg:grid-cols-[.95fr_1.05fr]">
+      <div class="card rounded-[2rem] p-7">
+        <p class="text-sm font-black text-[#8a2e2a]">এখনকার আবহাওয়া</p>
+        <div id="wx-now" class="mt-3 rounded-2xl bg-[#f0ead9] p-6 text-sm leading-7 text-[#4d5751]">
+          {initialNowHtml
+            ? <div set:html={initialNowHtml} />
+            : <p>আবহাওয়ার তথ্য লোড হচ্ছে…</p>}
+        </div>
       </div>
-    ))}
-  </div>
-
-  <div class="mt-8 grid gap-5 lg:grid-cols-[.95fr_1.05fr]">
-    <div class="card rounded-[2rem] p-7">
-      <p class="text-sm font-black text-[#8a2e2a]">এখনকার আবহাওয়া</p>
-      <div id="wx-now" class="mt-3 rounded-2xl bg-[#f0ead9] p-6 text-sm leading-7 text-[#4d5751]">আবহাওয়ার তথ্য লোড হচ্ছে…</div>
+      <div class="card rounded-[2rem] p-7">
+        <p class="text-sm font-black text-[#8a2e2a]">আগামী ৭ দিন</p>
+        <div id="wx-days" class="mt-3 rounded-2xl bg-[#f0ead9] p-4 text-sm leading-7 text-[#4d5751]">
+          {initialDaysHtml
+            ? <div set:html={initialDaysHtml} />
+            : <p>আবহাওয়ার তথ্য লোড হচ্ছে…</p>}
+        </div>
+      </div>
     </div>
-    <div class="card rounded-[2rem] p-7">
-      <p class="text-sm font-black text-[#8a2e2a]">আগামী ৭ দিন</p>
-      <div id="wx-days" class="mt-3 rounded-2xl bg-[#f0ead9] p-4 text-sm leading-7 text-[#4d5751]">আবহাওয়ার তথ্য লোড হচ্ছে…</div>
+    <div class="card mt-5 rounded-[2rem] p-7">
+      <div class="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p class="text-sm font-black text-[#8a2e2a]">ভিজিটর পরামর্শ</p>
+          <p class="mt-1 max-w-2xl text-xs leading-6 text-[#5d665f]">আবহাওয়া অনুযায়ী শুধু প্রাসঙ্গিক পরামর্শই দেখানো হয়; প্রযোজ্য না হলে কোনো ব্লকই দেখানো হয় না। স্মৃতিসৌধ মূলত খোলা প্রাঙ্গণ, তাই রোদ, বৃষ্টি ও বাতাসের প্রভাব এখানে বেশি টের পাওয়া যায়।</p>
+        </div>
+        <span class="shrink-0 rounded-full bg-[#173d30]/10 px-3 py-1 text-xs font-bold text-[#31583f]">খোলা প্রাঙ্গণ · মাঠ ও প্রতিফলন-পুকুর</span>
+      </div>
+      <div id="wx-advice" class="mt-4 text-sm">
+        {initialAdviceHtml
+          ? <div set:html={initialAdviceHtml} />
+          : <p class="text-sm leading-6 text-[#4d5751]">আবহাওয়া-ভিত্তিক পরামর্শ লোড হচ্ছে…</p>}
+      </div>
     </div>
+    <p class="mt-4 text-xs leading-6 text-[#5d665f]">এটি আবহাওয়া-মডেলের পূর্বাভাস-প্রাক্কলন ও তার ভিত্তিতে তৈরি স্বয়ংক্রিয় পরামর্শ; বাস্তব অবস্থা ভিন্ন হতে পারে। বৃষ্টি বা ঝড়ের সম্ভাবনায় ভ্রমণের আগের দিন ও সকালে সর্বশেষ পূর্বাভাস দেখে নেওয়া ভালো।</p>
   </div>
-  <p class="mt-4 text-xs leading-6 text-[#5d665f]">আবহাওয়া-ডেটা: <a class="underline decoration-[#8a2e2a]/40 underline-offset-2 hover:text-[#8a2e2a]" href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a> (মুক্ত পরিষেবা, কোনো চাবি লাগে না)। এটি পূর্বাভাস-প্রাক্কলন—বাস্তব অবস্থা ভিন্ন হতে পারে; বের হওয়ার আগে সর্বশেষ পূর্বাভাস দেখুন।</p>
 </section>
 
+{serverData && <script type="application/json" id="wx-init" is:inline set:html={JSON.stringify(serverData)}></script>}
+
 <script>
-  const LAT = '23.9113';
-  const LON = '90.2522';
-  const KEY = 'nmm_weather_v1';
+  import { buildNowHtml, buildDaysHtml, buildAdviceHtml, WX_API_URL } from '../data/weather';
+  const KEY = 'nmm_weather_v3';
   const TTL = 30 * 60 * 1000; // ৩০ মিনিট ক্যাশ
 
-  type WmEntry = [string, string];
-  const WM: Record<number, WmEntry> = {
-    0: ['☀️', 'পরিষ্কার আকাশ'],
-    1: ['🌤️', 'প্রধানত পরিষ্কার'],
-    2: ['⛅', 'আংশিক মেঘ'],
-    3: ['☁️', 'মেঘলা'],
-    45: ['🌫️', 'কুয়াশা'],
-    48: ['🌫️', 'কুয়াশা (তুষারসহ)'],
-    51: ['🌦️', 'হালকা গুঁড়ি গুঁড়ি'],
-    53: ['🌦️', 'গুঁড়ি গুঁড়ি বৃষ্টি'],
-    55: ['🌦️', 'ঘন গুঁড়ি গুঁড়ি'],
-    56: ['🌧️', 'হালকা বরফ-গুঁড়ি'],
-    57: ['🌧️', 'বরফ-গুঁড়ি'],
-    61: ['🌧️', 'হালকা বৃষ্টি'],
-    63: ['🌧️', 'মাঝারি বৃষ্টি'],
-    65: ['🌧️', 'ভারী বৃষ্টি'],
-    66: ['🌧️', 'হালকা বরফ-বৃষ্টি'],
-    67: ['🌧️', 'বরফ-বৃষ্টি'],
-    71: ['🌨️', 'হালকা তুষার'],
-    73: ['🌨️', 'মাঝারি তুষার'],
-    75: ['🌨️', 'ভারী তুষার'],
-    77: ['🌨️', 'তুষার-কণা'],
-    80: ['🌦️', 'হালকা বৃষ্টির ঝাঁক'],
-    81: ['🌧️', 'বৃষ্টির ঝাঁক'],
-    82: ['⛈️', 'তীব্র বৃষ্টির ঝাঁক'],
-    85: ['🌨️', 'হালকা তুষার-ঝাঁক'],
-    86: ['🌨️', 'তুষার-ঝাঁক'],
-    95: ['⛈️', 'বজ্রসহ বৃষ্টি'],
-    96: ['⛈️', 'বজ্র ও শিলাবৃষ্টি'],
-    99: ['⛈️', 'তীব্র বজ্র ও শিলাবৃষ্টি']
-  };
-  const wmInfo = (code: number): WmEntry => WM[code] || ['🌡️', 'তথ্য নেই'];
+  function rootNow(): HTMLElement | null {
+    return document.getElementById('wx-now');
+  }
+  function rootDays(): HTMLElement | null {
+    return document.getElementById('wx-days');
+  }
+  function rootAdvice(): HTMLElement | null {
+    return document.getElementById('wx-advice');
+  }
 
-  // বাংলা সংখ্যা/তারিখ ফরম্যাট (সাপোর্ট না করলে সাধারণ সংখ্যায় ফিরে যায়)
-  const bn = (n: number | string): string => Number(n).toLocaleString('bn-BD');
-  const dayFmt = (date: string): string => {
-    try { return new Date(date + 'T00:00:00').toLocaleDateString('bn-BD', { weekday: 'short', day: 'numeric', month: 'short' }); }
-    catch { return date; }
-  };
+  function render(d: any): void {
+    const now = buildNowHtml(d);
+    const days = buildDaysHtml(d);
+    const advice = buildAdviceHtml(d);
+    const rn = rootNow();
+    const rd = rootDays();
+    const ra = rootAdvice();
+    if (rn && now) rn.innerHTML = now;
+    if (rd && days) rd.innerHTML = days;
+    if (ra) ra.innerHTML = advice || '<p class="text-sm leading-6 text-[#4d5751]">আবহাওয়া-ভিত্তিক পরামর্শ পাওয়া যায়নি।</p>';
+  }
 
-  function el(html: string): HTMLElement {
-    const t = document.createElement('template');
-    t.innerHTML = html.trim();
-    return t.content.firstElementChild as HTMLElement;
+  function renderError(): void {
+    const rn = rootNow();
+    if (rn) rn.innerHTML = '<p>আবহাওয়ার তথ্য এই মুহূর্তে লোড করা যায়নি। একটু পরে আবার চেষ্টা করুন।</p>';
+    const rd = rootDays();
+    if (rd) rd.innerHTML = '<p>আবহাওয়ার তথ্য এই মুহূর্তে লোড করা যায়নি। একটু পরে আবার চেষ্টা করুন।</p>';
+    const ra = rootAdvice();
+    if (ra) ra.innerHTML = '<p class="text-sm leading-6 text-[#4d5751]">আবহাওয়া-ভিত্তিক পরামর্শ এই মুহূর্তে তৈরি করা যায়নি। একটু পরে আবার চেষ্টা করুন।</p>';
+  }
+
+  // বিল্ড-সময়ের প্রাথমিক ডেটা: সাথে সাথে দেখান + স্থানীয় ক্যাশে বসান
+  const seedEl = document.getElementById('wx-init');
+  let seed: any = null;
+  if (seedEl) {
+    try { seed = JSON.parse(seedEl.textContent || ''); } catch (e) { seed = null; }
+  }
+  if (seed && seed.current) {
+    render(seed);
+    try {
+      if (!localStorage.getItem(KEY)) {
+        localStorage.setItem(KEY, JSON.stringify({ t: Date.now(), data: seed }));
+      }
+    } catch (e) { /* স্টোরেজ না থাকলে কিছু যায় আসে না */ }
   }
 
   async function loadWeather(): Promise<void> {
@@ -114,18 +164,13 @@ const seasons = [
         const parsed = JSON.parse(cached);
         if (parsed && parsed.t && now - parsed.t < TTL && parsed.data) data = parsed.data;
       }
-    } catch (e) { /* স্টোরেজ না থাকলে কিছু যায় আসে না */ }
+    } catch (e) { /* ignore */ }
 
     if (!data) {
-      const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + LAT +
-        '&longitude=' + LON +
-        '&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m' +
-        '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max' +
-        '&timezone=Asia%2FDhaka&forecast_days=7&wind_speed_unit=kmh';
       const controller = new AbortController();
       const timer = window.setTimeout(() => controller.abort(), 15000);
       try {
-        const res = await fetch(url, { signal: controller.signal });
+        const res = await fetch(WX_API_URL, { signal: controller.signal });
         if (!res.ok) throw new Error('HTTP ' + res.status);
         data = await res.json();
         try { localStorage.setItem(KEY, JSON.stringify({ t: Date.now(), data })); } catch (e) { /* ignore */ }
@@ -137,66 +182,6 @@ const seasons = [
       }
     }
     render(data);
-  }
-
-  function renderError(): void {
-    const root = document.getElementById('wx-now');
-    if (root) root.innerHTML = '<p>আবহাওয়ার তথ্য এই মুহূর্তে লোড করা যায়নি। একটু পর আবার চেষ্টা করুন বা <a class="underline decoration-[#8a2e2a]/40 underline-offset-2" href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a>-তে দেখুন।</p>';
-    const days = document.getElementById('wx-days');
-    if (days) days.innerHTML = '<p>আবহাওয়ার তথ্য এই মুহূর্তে লোড করা যায়নি। একটু পর আবার চেষ্টা করুন।</p>';
-  }
-
-  function chip(label: string, value: string): string {
-    return '<div class="rounded-xl bg-white p-3"><span class="block text-[11px] font-bold text-[#5d665f]">' + label +
-      '</span><strong class="mt-0.5 block text-sm text-[#15221b]">' + value + '</strong></div>';
-  }
-
-  function render(d: any): void {
-    const c = d.current;
-    const icon = wmInfo(c.weather_code);
-    const nowBox = document.getElementById('wx-now');
-    if (nowBox) {
-      nowBox.innerHTML = '';
-      nowBox.appendChild(el(
-        '<div class="flex flex-wrap items-center gap-5">' +
-          '<span class="text-6xl leading-none" aria-hidden="true">' + icon[0] + '</span>' +
-          '<div>' +
-            '<strong class="block text-5xl font-black text-[#15221b]">' + bn(Math.round(c.temperature_2m)) + '°সে</strong>' +
-            '<span class="mt-1 block font-bold text-[#23654a]">' + icon[1] + '</span>' +
-          '</div>' +
-        '</div>'
-      ));
-      nowBox.appendChild(el(
-        '<div class="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">' +
-          chip('অনুভূতি', bn(Math.round(c.apparent_temperature)) + '°সে') +
-          chip('আর্দ্রতা', bn(Math.round(c.relative_humidity_2m)) + '%') +
-          chip('বাতাস', bn(Math.round(c.wind_speed_10m)) + ' কিমি/ঘণ্টা') +
-          chip('বৃষ্টি', bn(c.precipitation || 0) + ' মিমি') +
-        '</div>'
-      ));
-    }
-
-    const daysBox = document.getElementById('wx-days');
-    if (daysBox && d.daily && d.daily.time) {
-      daysBox.innerHTML = '';
-      const list = el('<ul class="divide-y divide-[#8a2e2a]/10"></ul>');
-      d.daily.time.forEach((date: string, i: number) => {
-        const w = wmInfo(d.daily.weather_code[i]);
-        const pr = (d.daily.precipitation_probability_max && d.daily.precipitation_probability_max[i] != null)
-          ? String(bn(d.daily.precipitation_probability_max[i])) + '%' : '—';
-        const li = el(
-          '<li class="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 py-3 sm:flex-nowrap">' +
-            '<span class="w-28 shrink-0 text-sm font-black text-[#15221b]">' + dayFmt(date) + '</span>' +
-            '<span class="shrink-0 text-lg" aria-hidden="true">' + w[0] + '</span>' +
-            '<span class="min-w-0 flex-1 truncate text-sm text-[#4d5751]">' + w[1] + '</span>' +
-            '<span class="shrink-0 text-sm font-bold text-[#15221b]">' + bn(Math.round(d.daily.temperature_2m_min[i])) + '° / ' + bn(Math.round(d.daily.temperature_2m_max[i])) + '°সে</span>' +
-            '<span class="shrink-0 rounded-full bg-[#173d30]/10 px-2 py-0.5 text-xs font-bold text-[#173d30]">বৃষ্টি ' + pr + '</span>' +
-          '</li>'
-        );
-        list.appendChild(li);
-      });
-      daysBox.appendChild(list);
-    }
   }
 
   loadWeather();

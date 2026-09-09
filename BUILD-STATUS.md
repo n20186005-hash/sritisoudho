@@ -17,7 +17,30 @@ pnpm run build && pnpm deploy   # Cloudflare Workers 静态资产（wrangler.jso
 ```
 上线前把自定义域名绑定到该 Worker；SITE_URL 环境变量仍可覆盖站点基址（默认已用 sritisoudho.com，因此 canonical/og/sitemap 现在恒为绝对正式 URL）。
 
-## 2026-09-04 · SEO 实体绑定 + PWA（本轮）
+## 2026-09-09 · Google 数据快照同步（本轮）
+
+1. **评分评价数 23,481 → 23,499**（用户最新 Google Maps 快照）：JSON-LD `aggregateRating.reviewCount` 23499、首页评分卡 ২৩,৪৯৯ রিভিউ、SourcesSection 披露（৪.৬，প্রায় ২৩,৪৯৯টি রিভিউ）三处同步。
+2. **内容时间戳刷新为 2026-09-09**：WebPage `dateModified`、Footer 与 SourcesSection 的「সর্বশেষ হালনাগাদ」均改为 ৯ সেপ্টেম্বর ২০২৬。
+3. 其余实体核对全部一致、无需改动：maps 短链 `kfUxNKYsDusuGj9f6`（JSON-LD hasMap/sameAs + Header + MapEmbed + Sources 处）、坐标 23.911298478561065/90.2522003771468、pb embed 载荷（place-id 0x3755e8fb9aa0707f:0x7f247dcf3afffae9，语言段保持 bn 匹配全站孟加拉语，有意为之）、Plus Code W763+GW、地址 ঢাকা–আরিচা মহাসড়ক/সাভার 1344、评分 4.6。
+
+## 2026-09-09 · 内容与体验增强（同轮第二批）
+
+1. **天气模块升级为「构建期服务器端抓取 + 客户端缓存刷新」**：新增 `src/data/weather.ts` 共享模块（`WX_API_URL` 单点、WMO 图标/标签、孟加拉数字/日期、now+7 日 HTML 构建器，服务端 frontmatter 与客户端脚本共用）；`Weather.astro` frontmatter 在构建/渲染期以 7 秒超时容错抓取 Open-Meteo（失败不阻断构建），SSR 直接注入现况与 7 日列表到 HTML（JS 关闭也能看到），页面再以 30 分钟 localStorage 缓存做运行期刷新（键 `nmm_weather_v2`）。**彻底移除面向游客的技术性文案**（原「Open-Meteo (মুক্ত পরিষেবা, কোনো চাবি লাগে না)」及引言中的接口说明已删），保留自然的坐标与「预报为模型估算」提示；Open-Meteo 仅在隐私条款页合规披露。
+2. **设施区 6 → 9 类**：新增「চিকিৎসা সেবা ও ফার্মেসি / নগদ টাকা ও এটিএম / যোগাযোগ ও ইন্টারনেট」，仍为类型化中立描述（无商户名），编号 ১–৯。
+3. **新增 RouteSection.astro「একটি আদর্শ দর্শন-রুটের রূপরেখা」**：6 步院内参观动线卡（入口→湖与桥→正面广场/倒影池→七对墙→园林休息→离开），插于交通段与设施段之间；明确标注非官方路线、约 1.5–2 小时、可因管理/安保调整。
+4. **图片体积核查**：public/images 四张 jpg 合计约 347 KB（98.6/87.8/99.5/61.1 KB），上轮已压缩，无需再次有损重压。
+5. 验证：read_lints 0 错误。本地 node_modules 的 pnpm 符号链被环境 shim 标记 untrusted（os error 448），无法本地跑 astro build，需在有网 CI 执行 `pnpm install && pnpm run build` 复核。
+
+## 2026-09-09 · 天气「智能游客建议」升级（同轮第三批）
+
+1. **数据字段扩展**：`src/data/weather.ts` 的 `WX_API_URL` 的 daily 新增 `uv_index_max`，请求追加 `&alerts=true`（Open-Meteo 官方气象预警，有才显示）。
+2. **共享建议引擎**（`weather.ts` 纯函数，SSR 与客户端复用同一文案库，杜绝两套漂移）：`wxAdvice(d)` 按当前实时 + 今日 daily（天气码/最高最低/降水概率/UV/预警）判据组合输出 `risks/dress/plan/gear`；`buildAdviceHtml(d)` 渲染动态 HTML。
+3. **触发规则**（规格阈值全落地，纯孟加拉语口语化、无气象术语，不满足即不渲染）：气象预警（置顶红条最高优先级）→ 雷雨 → 大雨 → 中雨/细雨 → 降水概率≥60 → 雾/霾 → 高温（≥32℃）→ UV≥5 → 低温（日高≤10℃或晨≤12℃）→ 昼夜差>8℃ → 大风（≥50 km/h 风险 / 29–49 提醒）→ 晴好/阴天正面建议 → 温水建议；空态中性文案。
+4. **场景适配**：萨瓦尔为「开阔露天纪念园」，所有文案针对露天广场/晒、雨、风、雷、湿滑与能见度适配，刻意不含海边游船/缆车/雪场等无关提示；UI 建议面板显示环境徽章「খোলা প্রাঙ্গণ · মাঠ ও প্রতিফলন-পুকুর」。
+5. **UI**：Weather.astro 在「现在+7 日」卡片下方新增整宽「ভিজিটর পরামর্শ」面板（`#wx-advice`），风险红条 `⚠️ ঝুঁকি ও সতর্কতা` 置顶、三栏 🧥 পোশাক-পরামর্শ / 🗺️ ঘোরার পরিকল্পনা / 🎒 সঙ্গে রাখবেন；SSR 构建期预填充 + 客户端刷新同步；localStorage 键升至 `nmm_weather_v3`（强制拉取新字段）。
+6. **验证**：Node v24 原生 TS 剥离直接调用引擎冒烟测试 5 场景（晴热 / 中雨 / 雷雨大风+预警 / 雾 / 凉爽晴好）——红条、三栏、空态与条件隐藏全部正确、无运行时异常；read_lints 0 错误。完整构建仍须在有网 CI 执行 `pnpm install && pnpm run build`。
+
+## 2026-09-04 · SEO 实体绑定 + PWA（上一轮）
 
 1. **域名与 sitemap**：`astro.config.ts` 默认 `site='https://sritisoudho.com'`（`SITE_URL` 可覆盖），启用 `@astrojs/sitemap`；新增 `public/robots.txt`（指向 sitemap-index）。
 2. **最新景点数据落地**：评分 4.6（23,481 条评价）现同时在页面评分卡与 JSON-LD `aggregateRating`；官方坐标（与 Google pb embed 一致）`23.911298478561065 / 90.2522003771468` 写入 JSON-LD `geo`、正文坐标（৯০.২৫২২°）与 Weather 模块（LON 90.2522）；地址 PostalAddress `সাভার 1344 / BD`、Plus Code `W763+GW` 已就位。地图 pb 载荷与用户提供一致（仅语言段用 bn！2sbd 匹配全站孟加拉语，有意为之）。

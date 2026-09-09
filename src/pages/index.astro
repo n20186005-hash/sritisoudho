@@ -5,6 +5,7 @@ import ArchitectureSection from '../components/ArchitectureSection.astro';
 import FacilitiesSection from '../components/FacilitiesSection.astro';
 import StoriesSection from '../components/StoriesSection.astro';
 import Weather from '../components/Weather.astro';
+import RouteSection from '../components/RouteSection.astro';
 import SourcesSection from '../components/SourcesSection.astro';
 
 const homeUrl = Astro.site ? new URL('/', Astro.site).href : undefined;
@@ -80,7 +81,7 @@ const attraction: Record<string, unknown> = {
   aggregateRating: {
     '@type': 'AggregateRating',
     ratingValue: '4.6',
-    reviewCount: 23481,
+    reviewCount: 23499,
     bestRating: '5'
   },
   sameAs: [
@@ -116,7 +117,7 @@ const webpageSchema: Record<string, unknown> = {
   name: title,
   description,
   inLanguage: 'bn-BD',
-  dateModified: '2026-09-04',
+  dateModified: '2026-09-09',
   isPartOf: {
     '@type': 'WebSite',
     name: 'জাতীয় স্মৃতিসৌধ দর্শনার্থী গাইড',
@@ -153,7 +154,7 @@ const webpageSchema: Record<string, unknown> = {
       <div class="px-4 py-3"><p class="text-xs font-bold text-[#8a2e2a]">অবস্থান</p><p class="mt-1 font-bold">নবীনগর, সাভার</p></div>
       <div class="px-4 py-3"><p class="text-xs font-bold text-[#8a2e2a]">ঢাকা থেকে</p><p class="mt-1 font-bold">প্রায় ৩৫ কিলোমিটার</p></div>
       <div class="px-4 py-3"><p class="text-xs font-bold text-[#8a2e2a]">মূল কাঠামোর উচ্চতা</p><p class="mt-1 font-bold">প্রায় ১৫০ ফুট</p></div>
-      <div class="px-4 py-3"><p class="text-xs font-bold text-[#8a2e2a]">মানচিত্রের রেটিং</p><p class="mt-1 font-bold">৪.৬ / ৫ <span class="font-normal text-black/55">· ২৩,৪৮১ রিভিউ · পরিবর্তনশীল</span></p></div>
+      <div class="px-4 py-3"><p class="text-xs font-bold text-[#8a2e2a]">মানচিত্রের রেটিং</p><p class="mt-1 font-bold">৪.৬ / ৫ <span class="font-normal text-black/55">· ২৩,৪৯৯ রিভিউ · পরিবর্তনশীল</span></p></div>
     </div>
   </section>
 
@@ -246,6 +247,8 @@ const webpageSchema: Record<string, unknown> = {
       </div>
     </div>
   </section>
+
+  <RouteSection />
 
   <FacilitiesSection />
 
