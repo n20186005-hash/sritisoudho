@@ -1,7 +1,8 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { withSiteName } from '../data/site';
 ---
-<BaseLayout title="পাতা পাওয়া যায়নি | জাতীয় স্মৃতিসৌধ দর্শনার্থী গাইড" description="অনুরোধ করা পাতাটি পাওয়া যায়নি।" noindex>
+<BaseLayout title={withSiteName('পাতা পাওয়া যায়নি')} description="অনুরোধ করা পাতাটি পাওয়া যায়নি।" noindex>
   <section class="container-shell grid min-h-[58vh] place-items-center py-20 text-center">
     <div class="max-w-xl">
       <p class="section-kicker">৪০৪</p>

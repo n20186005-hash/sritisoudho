@@ -7,16 +7,50 @@ import StoriesSection from '../components/StoriesSection.astro';
 import Weather from '../components/Weather.astro';
 import RouteSection from '../components/RouteSection.astro';
 import SourcesSection from '../components/SourcesSection.astro';
+import { ATTRACTION, FACTS, LAST_UPDATED, OFFICIAL_SOURCES, SITE_NAME, VISIT } from '../data/site';
 
 const homeUrl = Astro.site ? new URL('/', Astro.site).href : undefined;
 const heroUrl = Astro.site ? new URL('/images/smritisoudho-reflection.jpg', Astro.site).href : undefined;
-const title = 'জাতীয় স্মৃতিসৌধ (সাভার) | National Martyrs’ Monument Visitor Guide';
-const description = 'জাতীয় স্মৃতিসৌধ (National Martyrs’ Monument) সাভার, ঢাকা, বাংলাদেশে অবস্থিত। ইতিহাস, স্থাপত্য, খোলার সময়, যাতায়াত, সুবিধা, আবহাওয়া, মানচিত্র ও সাধারণ প্রশ্নসহ সম্পূর্ণ দর্শনার্থী গাইড।';
 
+// TDK: GSC-এর প্রকৃত খোলার সময় / অবস্থান / উচ্চতা-সংক্রান্ত প্রশ্নমুখী অনুসন্ধানের ভাষায় সরাসরি সাড়া দেয়
+const title = 'জাতীয় স্মৃতিসৌধ সাভার: খোলার সময়, অবস্থান ও উচ্চতা';
+const description =
+  'জাতীয় স্মৃতিসৌধ (সাভার) সাধারণত সকাল ৬টা থেকে সন্ধ্যা ৬টা খোলা থাকে, প্রবেশ বিনা টিকিটে। ঢাকা থেকে প্রায় ৩৫ কিমি, নবীনগর, ঢাকা–আরিচা মহাসড়ক; মূল কাঠামোর উচ্চতা প্রায় ১৫০ ফুট। ইতিহাস, স্থাপত্য, যাতায়াত, সুবিধা, আবহাওয়া ও মানচিত্রসহ পূর্ণ দর্শনার্থী গাইড।';
+
+const quickFacts = [
+  ['খোলার সময়', VISIT.hoursDisplay, VISIT.hoursNote],
+  ['প্রবেশ', VISIT.entryLabel, VISIT.entryNote],
+  ['অবস্থান', `${ATTRACTION.localityShort}, ${ATTRACTION.region}`, `ঢাকা–আরিচা মহাসড়ক · প্লাস কোড ${ATTRACTION.plusCode}`],
+  ['ঢাকা থেকে দূরত্ব', `প্রায় ${VISIT.distanceFromDhakaKm} কিলোমিটার`, `গাবতলী থেকে আনুমানিক ${VISIT.distanceFromGabtoliKm} কিলোমিটার`],
+  ['মূল কাঠামোর উচ্চতা', FACTS.height, 'সাত জোড়া ত্রিভুজাকার কংক্রিট প্রাচীর'],
+  ['মানচিত্রের রেটিং', `${ATTRACTION.rating.value} / ${ATTRACTION.rating.bestRating}`, `${ATTRACTION.rating.reviewCountDisplay} রিভিউ · পরিবর্তনশীল`]
+];
+
+// GSC-এর প্রকৃত অনুসন্ধান-ভাষা অনুসরণ করে সাজানো: খোলার সময় (সবচেয়ে বেশি প্রশ্ন) → অবস্থান → উচ্চতা → অপর নাম।
 const faq = [
   {
+    q: 'সাভার স্মৃতিসৌধ কখন খোলা থাকে ও কয়টা পর্যন্ত খোলা থাকে?',
+    a: `স্থানীয় সরকারি তথ্যে জাতীয় স্মৃতিসৌধ সাধারণত ${VISIT.hoursDisplay} পর্যন্ত দর্শনের জন্য খোলা থাকার কথা উল্লেখ আছে। জাতীয় দিবস, রাষ্ট্রীয় অনুষ্ঠান বা নিরাপত্তাজনিত কারণে সময় বদলাতে পারে—তাই গুরুত্বপূর্ণ সফরের আগে সাভার উপজেলা প্রশাসন বা পর্যটন বোর্ডের সর্বশেষ ঘোষণা দেখে নেওয়া ভালো।`
+  },
+  {
     q: 'জাতীয় স্মৃতিসৌধ কোথায় অবস্থিত?',
-    a: 'জাতীয় স্মৃতিসৌধ ঢাকা জেলার সাভারের নবীনগর এলাকায়, ঢাকা–আরিচা মহাসড়কের পাশে অবস্থিত। ঢাকা শহর থেকে সড়কপথে দূরত্ব প্রায় ৩৫ কিলোমিটার।'
+    a: `জাতীয় স্মৃতিসৌধ ঢাকা জেলার ${ATTRACTION.localityShort} এলাকায়, ঢাকা–আরিচা মহাসড়কের পাশে অবস্থিত। প্লাস কোড ${ATTRACTION.plusCode}, স্থানাঙ্ক আনুমানিক ${ATTRACTION.latitude.toFixed(4)}° উত্তর, ${ATTRACTION.longitude.toFixed(4)}° পূর্ব।`
+  },
+  {
+    q: 'জাতীয় স্মৃতিসৌধের উচ্চতা কত?',
+    a: `মূল কাঠামোর উচ্চতা ${FACTS.height}। সাত জোড়া ত্রিভুজাকার কংক্রিট প্রাচীর ক্রমশ উঁচু হয়ে চূড়ায় মিলিত হয়েছে, আর পুরো প্রাঙ্গণ ${FACTS.area} জুড়ে বিস্তৃত। উচ্চতা ও আয়তন প্রকাশ্য উৎসের আনুমানিক মান।`
+  },
+  {
+    q: 'জাতীয় স্মৃতিসৌধের অপর নাম কি?',
+    a: `ইংরেজিতে এটি ${ATTRACTION.nameEn} এবং প্রতিবর্ণীকরণে Jatiyo Smriti Soudho নামে পরিচিত; স্থানীয়ভাবে সাভার স্মৃতিসৌধ নামেও ডাকা হয়। সব নামই একই স্থাপত্য ও একই স্থানকে নির্দেশ করে।`
+  },
+  {
+    q: 'ঢাকা থেকে জাতীয় স্মৃতিসৌধ কত দূর?',
+    a: `ঢাকা শহর থেকে সড়কপথে দূরত্ব প্রায় ${VISIT.distanceFromDhakaKm} কিলোমিটার; গাবতলী থেকে ঢাকা–আরিচা মহাসড়ক ধরে নবীনগর পর্যন্ত আনুমানিক ${VISIT.distanceFromGabtoliKm} কিলোমিটার। পথের সময় যানজটের ওপর নির্ভর করে উল্লেখযোগ্যভাবে বদলাতে পারে।`
+  },
+  {
+    q: 'জাতীয় স্মৃতিসৌধ কে নকশা করেছেন ও কবে উদ্বোধন হয়?',
+    a: `${FACTS.architect}-এর নকশা ${FACTS.designCompetition} প্রতিযোগিতা থেকে নির্বাচিত হয়; স্মারকটি ${FACTS.inaugurated} উদ্বোধন করা হয়। নির্মাণ-তত্ত্বাবধানে ছিল সরকারি গণপূর্ত বিভাগ।`
   },
   {
     q: 'এখানে প্রবেশের জন্য টিকিট লাগে কি?',
@@ -52,42 +86,43 @@ const attraction: Record<string, unknown> = {
   '@context': 'https://schema.org',
   '@type': ['TouristAttraction', 'LandmarksOrHistoricalBuildings'],
   ...(homeUrl ? { '@id': homeUrl + '#attraction' } : {}),
-  name: 'জাতীয় স্মৃতিসৌধ',
-  alternateName: ['National Martyrs’ Monument', 'Jatiyo Smriti Soudho'],
+  name: ATTRACTION.nameBn,
+  alternateName: [...ATTRACTION.alternateNames],
   description: 'সাভারে অবস্থিত বাংলাদেশের মুক্তিযুদ্ধের শহীদদের স্মরণে নির্মিত জাতীয় স্মৃতিসৌধের স্বাধীন দর্শনার্থী তথ্য-গাইড।',
+  amenityFeature: [{ '@type': 'LocationFeatureSpecification', name: 'মূল কাঠামোর উচ্চতা', value: FACTS.height }],
   ...(homeUrl ? { url: homeUrl } : {}),
   ...(heroUrl ? { image: [heroUrl] } : {}),
-  ...(homeUrl ? { hasMap: 'https://maps.app.goo.gl/kfUxNKYsDusuGj9f6' } : {}),
+  ...(homeUrl ? { hasMap: ATTRACTION.googleMapsUrl } : {}),
   address: {
     '@type': 'PostalAddress',
-    streetAddress: 'ঢাকা–আরিচা মহাসড়ক, নবীনগর',
-    addressLocality: 'সাভার',
-    addressRegion: 'ঢাকা',
-    postalCode: '1344',
-    addressCountry: 'BD'
+    streetAddress: ATTRACTION.streetAddress,
+    addressLocality: ATTRACTION.locality,
+    addressRegion: ATTRACTION.region,
+    postalCode: ATTRACTION.postalCode,
+    addressCountry: ATTRACTION.country
   },
   geo: {
     '@type': 'GeoCoordinates',
-    latitude: 23.911298478561065,
-    longitude: 90.2522003771468
+    latitude: ATTRACTION.latitude,
+    longitude: ATTRACTION.longitude
   },
   openingHoursSpecification: [{
     '@type': 'OpeningHoursSpecification',
     dayOfWeek: ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],
-    opens: '06:00',
-    closes: '18:00'
+    opens: VISIT.opens,
+    closes: VISIT.closes
   }],
   isAccessibleForFree: true,
   aggregateRating: {
     '@type': 'AggregateRating',
-    ratingValue: '4.6',
-    reviewCount: 23499,
-    bestRating: '5'
+    ratingValue: ATTRACTION.rating.value,
+    reviewCount: ATTRACTION.rating.reviewCount,
+    bestRating: ATTRACTION.rating.bestRating
   },
   sameAs: [
-    'https://maps.app.goo.gl/kfUxNKYsDusuGj9f6',
-    'https://beautifulbangladesh.gov.bd/loc/dhaka/93',
-    'https://bn.banglapedia.org/index.php?title=জাতীয়_স্মৃতিসৌধ'
+    ATTRACTION.googleMapsUrl,
+    OFFICIAL_SOURCES[1].url,
+    OFFICIAL_SOURCES[2].url
   ]
 };
 
@@ -104,7 +139,7 @@ const faqSchema = {
 const orgSchema: Record<string, unknown> = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
-  name: 'জাতীয় স্মৃতিসৌধ দর্শনার্থী গাইড',
+  name: SITE_NAME,
   url: homeUrl,
   ...(homeUrl ? { logo: new URL('/logo.svg', homeUrl).href } : {}),
   description: 'বাংলা ভাষার স্বাধীন, অলাভজনক দর্শনার্থী তথ্য-গাইড—সাভারের জাতীয় স্মৃতিসৌধের ইতিহাস, স্থাপত্য, যাতায়াত ও ভ্রমণ-পরিকল্পনা।'
@@ -117,10 +152,10 @@ const webpageSchema: Record<string, unknown> = {
   name: title,
   description,
   inLanguage: 'bn-BD',
-  dateModified: '2026-09-09',
+  dateModified: LAST_UPDATED.iso,
   isPartOf: {
     '@type': 'WebSite',
-    name: 'জাতীয় স্মৃতিসৌধ দর্শনার্থী গাইড',
+    name: SITE_NAME,
     url: homeUrl
   },
   ...(heroUrl ? { primaryImageOfPage: heroUrl } : {})
@@ -149,12 +184,15 @@ const webpageSchema: Record<string, unknown> = {
     </div>
   </section>
 
-  <section class="border-b border-black/10 bg-[#eee8dc]">
-    <div class="container-shell grid divide-y divide-black/10 py-7 sm:grid-cols-4 sm:divide-x sm:divide-y-0">
-      <div class="px-4 py-3"><p class="text-xs font-bold text-[#8a2e2a]">অবস্থান</p><p class="mt-1 font-bold">নবীনগর, সাভার</p></div>
-      <div class="px-4 py-3"><p class="text-xs font-bold text-[#8a2e2a]">ঢাকা থেকে</p><p class="mt-1 font-bold">প্রায় ৩৫ কিলোমিটার</p></div>
-      <div class="px-4 py-3"><p class="text-xs font-bold text-[#8a2e2a]">মূল কাঠামোর উচ্চতা</p><p class="mt-1 font-bold">প্রায় ১৫০ ফুট</p></div>
-      <div class="px-4 py-3"><p class="text-xs font-bold text-[#8a2e2a]">মানচিত্রের রেটিং</p><p class="mt-1 font-bold">৪.৬ / ৫ <span class="font-normal text-black/55">· ২৩,৪৯৯ রিভিউ · পরিবর্তনশীল</span></p></div>
+  <section class="border-b border-black/10 bg-[#eee8dc]" aria-label="এক নজরে মূল তথ্য">
+    <div class="container-shell grid gap-3 py-8 sm:grid-cols-2 lg:grid-cols-3">
+      {quickFacts.map(([label, value, note]) => (
+        <div class="rounded-2xl border border-black/10 bg-white/70 px-5 py-4">
+          <p class="text-xs font-bold tracking-wide text-[#8a2e2a]">{label}</p>
+          <p class="mt-1 text-lg font-black leading-7">{value}</p>
+          <p class="mt-1 text-xs leading-5 text-black/55">{note}</p>
+        </div>
+      ))}
     </div>
   </section>
 
@@ -197,7 +235,7 @@ const webpageSchema: Record<string, unknown> = {
       <p class="text-sm font-bold tracking-wider text-[#e1b7a8]">দর্শনার্থী পরিকল্পনা</p>
       <h2 class="mt-3 max-w-3xl text-4xl font-black sm:text-5xl">শ্রদ্ধাশীল, ধীরস্থির একটি সফর</h2>
       <div class="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-        <article class="rounded-3xl border border-white/12 bg-white/[.06] p-6"><p class="text-sm font-bold text-[#e1b7a8]">প্রবেশ ও সময়</p><h3 class="mt-2 text-xl font-black">সাধারণত বিনা টিকিটে</h3><p class="mt-3 leading-7 text-white/72">স্থানীয় সরকারি তথ্যে সকাল ৬টা থেকে সন্ধ্যা ৬টা পর্যন্ত দর্শনের কথা উল্লেখ আছে। জাতীয় দিবস, রাষ্ট্রীয় অনুষ্ঠান বা নিরাপত্তাজনিত কারণে সময় ও প্রবেশ নিয়ন্ত্রণ বদলাতে পারে।</p></article>
+        <article class="rounded-3xl border border-white/12 bg-white/[.06] p-6"><p class="text-sm font-bold text-[#e1b7a8]">খোলার সময়</p><h3 class="mt-2 text-xl font-black">{VISIT.hoursDisplay}</h3><p class="mt-3 leading-7 text-white/72">স্থানীয় সরকারি তথ্যে সকাল ৬টা থেকে সন্ধ্যা ৬টা পর্যন্ত দর্শনের কথা উল্লেখ আছে এবং প্রবেশ সাধারণত {VISIT.entryLabel}। জাতীয় দিবস, রাষ্ট্রীয় অনুষ্ঠান বা নিরাপত্তাজনিত কারণে সময় ও প্রবেশ নিয়ন্ত্রণ বদলাতে পারে।</p></article>
         <article class="rounded-3xl border border-white/12 bg-white/[.06] p-6"><p class="text-sm font-bold text-[#e1b7a8]">সেরা সময়</p><h3 class="mt-2 text-xl font-black">সকাল বা শেষ বিকেল</h3><p class="mt-3 leading-7 text-white/72">নরম আলো, তুলনামূলক আরামদায়ক আবহ ও স্থাপত্যের ছায়া-রেখা দেখার জন্য সকাল এবং শেষ বিকেল সুবিধাজনক। শীতের মাসগুলো সাধারণত আরামদায়ক।</p></article>
         <article class="rounded-3xl border border-white/12 bg-white/[.06] p-6"><p class="text-sm font-bold text-[#e1b7a8]">সময় রাখুন</p><h3 class="mt-2 text-xl font-black">প্রায় ১.৫–২ ঘণ্টা</h3><p class="mt-3 leading-7 text-white/72">প্রধান স্মারক, প্রতিফলন-পুকুর, উদ্যান ও স্মৃতিস্থানগুলো তাড়াহুড়ো না করে দেখতে এই সময়টি একটি ব্যবহারিক গাইডলাইন।</p></article>
         <article class="rounded-3xl border border-white/12 bg-white/[.06] p-6"><p class="text-sm font-bold text-[#e1b7a8]">আচরণ</p><h3 class="mt-2 text-xl font-black">নীরবতা ও মর্যাদা</h3><p class="mt-3 leading-7 text-white/72">এটি জাতীয় স্মৃতিস্থান। ফুল দেওয়ার এলাকা, সমাধিক্ষেত্র ও আনুষ্ঠানিক পথের প্রতি সম্মান রাখুন; নিরাপত্তাকর্মীর নির্দেশনা অনুসরণ করুন।</p></article>
@@ -233,7 +271,7 @@ const webpageSchema: Record<string, unknown> = {
       </div>
       <div class="overflow-hidden rounded-[2rem] border border-black/10 bg-white p-2 shadow-xl shadow-black/5">
         <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6487.412098247093!2d90.2522003771468!3d23.911298478561065!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755e8fb9aa0707f%3A0x7f247dcf3afffae9!2sNational%20Martyrs'%20Monument!5e1!3m2!1sbn!2sbd!4v1788484997889!5m2!1sbn!2sbd"
+          src={ATTRACTION.mapsEmbedUrl}
           class="h-[520px] w-full rounded-[1.55rem] border-0"
           allowfullscreen
           loading="lazy"
@@ -241,8 +279,8 @@ const webpageSchema: Record<string, unknown> = {
           title="জাতীয় স্মৃতিসৌধের মানচিত্র"
         ></iframe>
         <div class="flex flex-wrap items-center justify-between gap-3 p-4 text-sm">
-          <span class="text-black/60">ঢাকা–আরিচা মহাসড়ক, সাভার ১৩৪৪ · W763+GW</span>
-          <a href="https://maps.app.goo.gl/kfUxNKYsDusuGj9f6" target="_blank" rel="noopener noreferrer" class="font-bold text-[#8a2e2a]">বড় মানচিত্র খুলুন →</a>
+          <span class="text-black/60">{ATTRACTION.addressRegionFull} · {ATTRACTION.plusCode}</span>
+          <a href={ATTRACTION.googleMapsUrl} target="_blank" rel="noopener noreferrer" class="font-bold text-[#8a2e2a]">বড় মানচিত্র খুলুন →</a>
         </div>
       </div>
     </div>
@@ -301,6 +339,7 @@ const webpageSchema: Record<string, unknown> = {
     <div class="mx-auto max-w-4xl">
       <p class="section-kicker">সাধারণ প্রশ্ন</p>
       <h2 class="mt-3 text-4xl font-black sm:text-5xl">ভ্রমণের আগে যা জানা ভালো</h2>
+      <p class="mt-5 text-sm leading-6 text-[#5d665f]">খোলার সময়, অবস্থান, উচ্চতা ও প্রবেশ-সংক্রান্ত প্রশ্নের উত্তর আগে দেওয়া হয়েছে। তথ্য হালনাগাদ: {LAST_UPDATED.display}।</p>
       <div class="mt-9 divide-y divide-black/10 border-y border-black/10">
         {faq.map((item, i) => (
           <details class="group py-6" open={i === 0}>

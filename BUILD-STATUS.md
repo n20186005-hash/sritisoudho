@@ -2,6 +2,19 @@
 
 单语（孟加拉语 bn-BD）静态站点：জাতীয় স্মৃতিসৌধ（萨瓦尔国家烈士纪念碑）访客指南。正式域名：**sritisoudho.com**。
 
+## 2026-09-29 · GSC 数据驱动的一轮 SEO 优化（本轮）
+
+数据：近 3 个月曝光 258 / 点击 0（CTR 0%），92.6% 来自移动端，95% 来自孟加拉；TOP 查询几乎全部指向「খোলার সময়（开放时间）」「কোথায় অবস্থিত（位于何处）」「উচ্চতা কত（高度多少）」「অপর নাম কি（别名）」；网页维度同时存在 https/ http/ https+www 三条 URL 被分别索引（214 / 30 / 14 曝光），权重被稀释。
+
+1. **新增 `src/data/site.ts` 作为全站唯一事实源**：导出 `SITE_NAME`（`জাতীয় স্মৃতিসৌধ সাভার — দর্শনার্থী গাইড`，遵循「景点+城市+旅游指南」命名）、`SITE_SHORT_NAME`、`withSiteName()`、`ATTRACTION`（名称/别名/地址/坐标/Google Maps 短链与 embed/Plus Code W763+GW/评分快照）、`VISIT`（06:00–18:00、免费入场、建议时长、距离）、`FACTS`（150 ft、34 ha、1978 竞赛、建筑师、启用日期）、`OFFICIAL_SOURCES`、`LAST_UPDATED`。此前散落在 6 个文件里的硬编码全部改从这里读取。
+2. **URL 规范化（本轮最关键的修复）**：新增自定义 Worker `src/worker.ts`（`wrangler.jsonc` 的 `main`）——`http://`→`https://`、`www.`→apex 一律 **301**（3600 秒可缓存 Location），支持任一组合（含 `http://www.`）；并给所有响应加 HSTS、nosniff、Referrer-Policy、X-Frame-Options、Permissions-Policy、COOP 与一条只允许 Maps iframe / GA4 / 本站资源的 CSP；同时对 GET 404 回落到 `/404/` 渲染站点自身 404 页。配套新增 `public/_headers`（同一套安全头 + `/images/*`、`/icons/*` 周级缓存、`/sw.js` no-store）。
+3. **TDK 重写以对齐真实查询**：title `জাতীয় স্মৃতিসৌধ সাভার: খোলার সময়, অবস্থান ও উচ্চতা`；description 首句直接给出答案（开放时间 6–18、免费、距达卡 35 km、Nabinagar/Dhaka–Aricha Hwy、约 150 ft）。
+4. **首屏新增「এক নজরে মূল তথ্য」六卡事实栏**（替换原 4 项统计条）：开放时间 / 免费入场 / 位置+Plus Code / 达卡 35 km（并答 Gabtoli≈20 km）/ 高度 150 ft / 评分 4.6·23,545——在首屏用结构化文本回答全部 TOP 查询，改善 CTR 与摘要可用性。
+5. **FAQ 8 → 14 条并按 GSC 查询语言重排**：新增「সাভার স্মৃতিসৌধ কখন খোলা থাকে ও কয়টা পর্যন্ত খোলা থাকে」（首位）、「উচ্চতা কত」、「অপর নাম কি」、「ঢাকা থেকে কত দূর（含 গাবতলী）」、「কে নকশা করেছেন ও কবে উদ্বোধন」。FAQPage JSON-LD 由同一数组派生，数量与可见 `<details>` 严格一致。
+6. **实体数据同步到最新快照**：评分评价数 23,499 → **23,545**（JSON-LD `aggregateRating.reviewCount`、首屏卡片、SourcesSection 披露三处）；`WebPage.dateModified` 与 Footer/Sources 更新时间 → ২৯ সেপ্টেম্বর ২০২৬；地图 iframe src、maps 短链改由 `ATTRACTION` 常量输出。
+7. **站名统一**：`BaseLayout` 的 `og:site_name`、`LegalLayout`/404 的 title 后缀（经 `withSiteName()`）、`Organization`/`WebSite` JSON-LD、Footer 版权行、`public/site.webmanifest` 的 name/description 全部读 `SITE_NAME`。
+8. 校验：`read_lints` 全库 0 诊断；完整 `pnpm install && pnpm build` 仍须在有网 CI 执行（本地本次未完成，见下）。
+
 ## 已验证
 
 - 2026-09-04：`pnpm install` 成功，`pnpm-lock.yaml` 已提交。

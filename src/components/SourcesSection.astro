@@ -1,21 +1,22 @@
 ---
 import { anchors } from '../data/anchors';
+import { ATTRACTION, LAST_UPDATED, OFFICIAL_SOURCES } from '../data/site';
 
 const sources = [
   {
-    name: 'সাভার উপজেলা প্রশাসন',
+    name: OFFICIAL_SOURCES[0].name,
     desc: 'পর্যটন আকর্ষণ তালিকায় জাতীয় স্মৃতিসৌধের অবস্থান ও স্থানীয় তথ্য।',
-    url: 'https://savar.dhaka.gov.bd/pages/tourist-spot/697f940935ce18e1c06b73cd'
+    url: OFFICIAL_SOURCES[0].url
   },
   {
-    name: 'বাংলাদেশ ট্যুরিজম বোর্ড · Beautiful Bangladesh',
+    name: OFFICIAL_SOURCES[1].name,
     desc: 'জাতীয় পর্যায়ের সরকারি পর্যটন তথ্যে স্মৃতিসৌধের আনুষ্ঠানিক তালিকাভুক্তি।',
-    url: 'https://beautifulbangladesh.gov.bd/loc/dhaka/93'
+    url: OFFICIAL_SOURCES[1].url
   },
   {
-    name: 'বাংলাপিডিয়া',
+    name: OFFICIAL_SOURCES[2].name,
     desc: 'বাংলাদেশ এশিয়াটিক সোসাইটির জাতীয় জ্ঞানকোষে স্মৃতিসৌধের পটভূমি ও নির্মাণ-ইতিহাস।',
-    url: 'https://bn.banglapedia.org/index.php?title=জাতীয়_স্মৃতিসৌধ'
+    url: OFFICIAL_SOURCES[2].url
   }
 ];
 ---
@@ -49,13 +50,13 @@ const sources = [
     <div class="mt-8 grid gap-4 lg:grid-cols-2">
       <div class="rounded-3xl border border-black/10 bg-[#eee8dc] p-6 text-sm leading-7 text-[#4d5751]">
         <strong class="block text-[#15221b]">রেটিং-এর ব্যাখ্যা</strong>
-        মানচিত্র/Google-এ প্রকাশ্য দর্শনার্থী রেটিং বর্তমানে ৪.৬ (প্রায় ২৩,৪৯৯টি রিভিউ)। এটি কোনো সরকারি মূল্যায়ন নয়
+        মানচিত্র ও স্থানীয় সূত্রে প্রকাশ্য দর্শনার্থী রেটিং বর্তমানে {ATTRACTION.rating.value} (প্রায় {ATTRACTION.rating.reviewCountDisplay}টি রিভিউ; {ATTRACTION.rating.syncedLabel}-এর স্ন্যাপশট)। এটি কোনো সরকারি মূল্যায়ন নয়
         এবং সময়ের সঙ্গে বদলাতে পারে; এখানে তথ্যবিন্দু হিসেবেই দেখানো হয়েছে।
       </div>
       <div class="rounded-3xl border border-black/10 bg-[#eee8dc] p-6 text-sm leading-7 text-[#4d5751]">
         <strong class="block text-[#15221b]">ছবি ও হালনাগাদ</strong>
         পৃষ্ঠায় ব্যবহৃত স্থানীয় ছবি-সম্পদের উৎস ও প্রতিস্থাপন নির্দেশনা IMAGE-CREDITS.md নথিতে আছে।
-        সর্বশেষ হালনাগাদ: ৯ সেপ্টেম্বর ২০২৬ · সাভার, ঢাকা, বাংলাদেশ।
+        সর্বশেষ হালনাগাদ: {LAST_UPDATED.display} · সাভার, ঢাকা, বাংলাদেশ।
       </div>
     </div>
   </div>

@@ -36,6 +36,15 @@ Cloudflare deploy:
 pnpm deploy
 ```
 
+## ক্যানোনিক্যাল ইউআরএল ও নিরাপত্তা
+
+সাইটটি `wrangler.jsonc`-এর `main` (`src/worker.ts`) দিয়ে Cloudflare Workers Static Assets-এ ডিপ্লয় হয়। ওয়ার্কারটি সব অনুরোধকে একমাত্র ক্যানোনিক্যাল ডোমেইন `https://sritisoudho.com`-এ 301 রিডাইরেক্ট করে:
+
+- `http://sritisoudho.com/*` → `https://sritisoudho.com/*`
+- `https://www.sritisoudho.com/*` → `https://sritisoudho.com/*` (এবং `http://www.` সংস্করণও)
+
+GET ৪০৪ হলে সাইটের নিজস্ব `/404/` পাতা দেখায়। নিরাপত্তা-হেডার (HSTS, CSP, nosniff, Referrer-Policy, COOP ইত্যাদি) `public/_headers`-এও দেওয়া আছে। Cloudflare ড্যাশবোর্ডে **SSL/TLS → Edge Certificates → Always Use HTTPS** চালু রাখার পরামর্শ দেওয়া হয়।
+
 ## কুকি ও বিশ্লেষণ
 
 GA4 measurement ID: `G-HXM22WWPKP`। বিশ্লেষণ ডিফল্টভাবে বন্ধ; `/cookies/` পাতায় সম্মতি দেওয়ার পর GA4 লোড হয়।
