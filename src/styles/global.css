@@ -35,3 +35,8 @@ a { text-underline-offset: .2em; }
   background-size: 84px 100%;
 }
 .focus-ring:focus-visible { outline: 3px solid #cf5b4f; outline-offset: 4px; }
+
+.container-shell,.card,#wx-now,#wx-days,#wx-advice{min-width:0;}
+iframe{width:100%;max-width:100%;}
+html[lang="bn-BD"] :is(h1,h2,h3){line-height:1.6;}
+@media(max-width:640px){header .container-shell{flex-wrap:wrap;gap:.75rem;}.prose-bn{overflow-wrap:anywhere;}#wx-now .grid{grid-template-columns:repeat(2,minmax(0,1fr));}}

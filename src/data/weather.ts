@@ -6,11 +6,27 @@
 
 // Open-Meteo বিনামূল্যের পূর্বাভাস API (কোনো চাবি লাগে না) — স্থানাঙ্ক সাভার/জাতীয় স্মৃতিসৌধ
 export const WX_API_URL =
-  'https://api.open-meteo.com/v1/forecast?latitude=23.9113' +
-  '&longitude=90.2522' +
+  'https://api.open-meteo.com/v1/forecast?latitude=23.9112985' +
+  '&longitude=90.2547753' +
   '&current=temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m' +
   '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,uv_index_max' +
-  '&timezone=Asia%2FDhaka&forecast_days=7&wind_speed_unit=kmh&alerts=true';
+  '&timezone=Asia%2FDhaka&forecast_days=7&wind_speed_unit=kmh';
+
+export const TIMEZONE='Asia/Dhaka', OFFSET=21600, TTL=600000, DEADLINE=4500;
+export interface Forecast {timezone:string;utc_offset_seconds:number;current:{time:string;temperature_2m:number;apparent_temperature:number;relative_humidity_2m:number;weather_code:number;wind_speed_10m:number;precipitation:number};daily:{time:string[];weather_code:number[];temperature_2m_max:number[];temperature_2m_min:number[];precipitation_probability_max:(number|null)[];uv_index_max:(number|null)[]}}
+export function validateWeather(data:unknown,now=Date.now()):Forecast {
+ const d=data as Forecast,c=d?.current,x=d?.daily;const n=(v:unknown,lo:number,hi:number)=>typeof v==='number'&&Number.isFinite(v)&&v>=lo&&v<=hi;
+ const today=new Date(now+OFFSET*1000).toISOString().slice(0,10);
+ if(d?.timezone!==TIMEZONE||d.utc_offset_seconds!==OFFSET||!c||!x||typeof c.time!=='string'||!/^\d{4}-\d{2}-\d{2}T([01]\d|2[0-3]):[0-5]\d$/.test(c.time))throw Error('Incomplete forecast');
+ const age=now-Date.parse(c.time+'+06:00');if(!Number.isFinite(age)||age>10800000||age< -900000||c.time.slice(0,10)!==today)throw Error('Stale forecast');
+ for(const [key,lo,hi]of [['temperature_2m',-100,65],['apparent_temperature',-120,80],['relative_humidity_2m',0,100],['wind_speed_10m',0,500],['precipitation',0,1000]]as const)if(!n(c[key],lo,hi))throw Error('Invalid current number');
+ const code=(v:unknown)=>typeof v==='number'&&Object.hasOwn(WM,v);if(!code(c.weather_code))throw Error('Invalid WMO');
+ for(const key of ['time','weather_code','temperature_2m_max','temperature_2m_min','precipitation_probability_max','uv_index_max']as const)if(!Array.isArray(x[key])||x[key].length!==7)throw Error('Incomplete seven days');
+ for(let i=0;i<7;i++){const day=new Date(Date.parse(today+'T00:00Z')+i*86400000).toISOString().slice(0,10);if(x.time[i]!==day||!code(x.weather_code[i]))throw Error('Invalid forecast date/code');if(!n(x.temperature_2m_max[i],-100,65)||!n(x.temperature_2m_min[i],-100,65)||x.temperature_2m_min[i]>x.temperature_2m_max[i])throw Error('Invalid temperature');if(x.precipitation_probability_max[i]!==null&&!n(x.precipitation_probability_max[i],0,100))throw Error('Invalid probability');if(x.uv_index_max[i]!==null&&!n(x.uv_index_max[i],0,30))throw Error('Invalid UV');}
+ return d;
+}
+
+export async function fetchWeather():Promise<Forecast>{const controller=new AbortController();let timer:ReturnType<typeof setTimeout>|undefined;try{return await Promise.race([(async()=>{const response=await fetch(WX_API_URL,{signal:controller.signal});if(!response.ok)throw Error("ProviderHTTP");const d=validateWeather(await response.json());if(controller.signal.aborted)throw Error("Deadline");return d;})(),new Promise<Forecast>((_,reject)=>timer=setTimeout(()=>{controller.abort();reject(Error("Deadline"));},DEADLINE))]);}finally{clearTimeout(timer);}}
 
 export interface WmEntry {
   icon: string;
@@ -40,7 +56,7 @@ export const WM: Record<number, WmEntry> = {
   77: { icon: '🌨️', label: 'তুষার-কণা' },
   80: { icon: '🌦️', label: 'হালকা বৃষ্টির ঝাঁক' },
   81: { icon: '🌧️', label: 'বৃষ্টির ঝাঁক' },
-  82: { icon: '⛈️', label: 'তীব্র বৃষ্টির ঝাঁক' },
+  82: { icon: '🌧️', label: 'তীব্র বৃষ্টির ঝাঁক' },
   85: { icon: '🌨️', label: 'হালকা তুষার-ঝাঁক' },
   86: { icon: '🌨️', label: 'তুষার-ঝাঁক' },
   95: { icon: '⛈️', label: 'বজ্রসহ বৃষ্টি' },
@@ -85,6 +101,7 @@ function chipHtml(label: string, value: string): string {
 
 // বর্তমান আবহাওয়ার HTML (কোনো বাহ্যিক ডেটা ছাড়াই সার্ভার ও ক্লায়েন্ট দুই জায়গাতেই একই আউটপুট)
 export function buildNowHtml(d: any): string {
+  d=validateWeather(d);
   if (!d || !d.current) return '';
   const c = d.current;
   const info = wmInfo(c.weather_code);
@@ -107,6 +124,7 @@ export function buildNowHtml(d: any): string {
 
 // আগামী ৭ দিনের তালিকার HTML
 export function buildDaysHtml(d: any): string {
+  d=validateWeather(d);
   if (!d || !d.daily || !d.daily.time) return '';
   const days = d.daily;
   let rows = '';
@@ -117,10 +135,10 @@ export function buildDaysHtml(d: any): string {
         ? bnNum(days.precipitation_probability_max[i]) + '%'
         : '—';
     rows +=
-      '<li class="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 py-3 sm:flex-nowrap">' +
-      '<span class="w-28 shrink-0 text-sm font-black text-[#15221b]">' + dayLabel(date) + '</span>' +
+      '<li class="grid min-w-0 grid-cols-2 items-center gap-2 py-3 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_auto_auto]">' +
+      '<span class="min-w-0 text-sm font-black text-[#15221b]">' + dayLabel(date) + '</span>' +
       '<span class="shrink-0 text-lg" aria-hidden="true">' + w.icon + '</span>' +
-      '<span class="min-w-0 flex-1 truncate text-sm text-[#4d5751]">' + w.label + '</span>' +
+      '<span class="min-w-0 whitespace-normal break-words text-sm text-[#4d5751]">' + w.label + '</span>' +
       '<span class="shrink-0 text-sm font-bold text-[#15221b]">' +
       bnNum(Math.round(days.temperature_2m_min[i])) + '° / ' + bnNum(Math.round(days.temperature_2m_max[i])) + '°সে</span>' +
       '<span class="shrink-0 rounded-full bg-[#173d30]/10 px-2 py-0.5 text-xs font-bold text-[#173d30]">বৃষ্টি ' + pr + '</span>' +
@@ -144,8 +162,8 @@ const kindOf = (code: number): string => {
   if (code === 3) return 'overcast';
   if (code === 45 || code === 48) return 'fog';
   if (code >= 51 && code <= 57) return 'drizzle';
-  if (code >= 61 && code <= 63) return 'rain';
-  if ((code >= 65 && code <= 67) || code === 81 || code === 82) return 'heavy';
+  if ([61,63,66,80,81].includes(code)) return 'rain';
+  if ([65,67,82].includes(code)) return 'heavy';
   if ((code >= 71 && code <= 77) || code === 85 || code === 86) return 'snow';
   if (code >= 95) return 'thunder';
   return 'clear';
@@ -168,6 +186,7 @@ const arrN = (arr: unknown, i: number): number | null => {
 };
 
 export function wxAdvice(d: any): Advice {
+  d=validateWeather(d);
   const advice: Advice = { risks: [], dress: [], plan: [], gear: [] };
   if (!d || !d.current) return advice;
   const add = (list: keyof Advice, s: string) => {
@@ -194,14 +213,6 @@ export function wxAdvice(d: any): Advice {
   const thunderish = todayKind === 'thunder' || curKind === 'thunder';
   const adverse = ['fog', 'drizzle', 'rain', 'heavy', 'snow', 'thunder'].indexOf(todayKind) > -1;
 
-  // 1) সর্বোচ্চ অগ্রাধিকার — সরকারি/জাতীয় আবহাওয়া সতর্কবার্তা (আছে তবেই দেখায়)
-  if (Array.isArray(d.alerts) && d.alerts.length) {
-    d.alerts.slice(0, 3).forEach((a: any) => {
-      const name = String(a && (a.event || a.headline) || 'আবহাওয়া সতর্কবার্তা');
-      add('risks', '“' + name + '” সংক্রান্ত সতর্কবার্তা জারি হয়েছে। বিপজ্জনক আবহাওয়ায় ভ্রমণ পিছিয়ে দিন, নিরাপদ স্থানে থাকুন এবং কর্তৃপক্ষের সর্বশেষ নির্দেশনা মানুন।');
-    });
-  }
-
   // 2) বজ্রঝড়
   if (thunderish) {
     add('risks', 'বজ্রঝড়ের আশঙ্কা — খোলা প্রাঙ্গণে বজ্রপাতের ঝুঁকি বেশি। বজ্রপাত শুরু হলে মাঠ, উঁচু খোলা জায়গা, গাছ ও পানির ধার ছেড়ে পাকা আশ্রয়ে যান।');
@@ -215,10 +226,10 @@ export function wxAdvice(d: any): Advice {
   }
   // 4) মাঝারি বৃষ্টি / ঝিরিঝিরি
   else if (todayKind === 'rain' || curKind === 'rain') {
-    add('plan', 'বৃষ্টি হওয়ার সম্ভাবনা — ছাতা বা রেইনকোট সঙ্গে রাখুন; ভেজা পথে পিছলে পড়ার সতর্কতা নিন।');
+    add('plan', 'মডেলে বৃষ্টি দেখানো হয়েছে — ছাতা বা রেইনকোট রাখুন; ভেজা পথে সতর্ক থাকুন।');
     add('gear', 'ভাঁজ করা ছাতা বা হালকা রেইনকোট');
   } else if (todayKind === 'drizzle' || curKind === 'drizzle') {
-    add('plan', 'হালকা বৃষ্টির ফোঁটা থাকতে পারে — ছাতা নিলেই ঘোরা যায়; নরম আলোয় ছবিও তুলতে পারেন।');
+    add('plan', 'মডেলে গুঁড়ি গুঁড়ি বৃষ্টি; যাওয়ার আগে আসল পথ ও প্রবেশের অবস্থা যাচাই করুন।');
     add('gear', 'ছোট ভাঁজ করা ছাতা');
   }
   // 5) বৃষ্টির সম্ভাবনা বেশি (প্রবল বৃষ্টি/বজ্র ছাড়া)
@@ -229,8 +240,8 @@ export function wxAdvice(d: any): Advice {
 
   // 6) কুয়াশা/ধোঁয়াশা (সড়ক-দৃশ্য অভিযোজিত)
   if (todayKind === 'fog' || curKind === 'fog') {
-    add('risks', 'কুয়াশা/ধোঁয়াশা: ভোরে দৃশ্যমানতা কম — সড়ক ও হাঁটার পথে সাবধান; দূর থেকে স্মৃতিসৌধের দৃশ্য অস্পষ্ট লাগতে পারে।');
-    add('plan', 'সকালের কুয়াশা কাটার পরে (দিনের আলো বাড়লে) বেরোনো ভালো — দৃশ্য ও ছবি দুটোই পরিষ্কার পাবেন।');
+    add('risks', 'মডেলে কুয়াশা/ধোঁয়াশা; আসল দৃশ্যমানতা যাচাই করুন — সড়ক ও হাঁটার পথে সাবধান; দূর থেকে স্মৃতিসৌধের দৃশ্য অস্পষ্ট লাগতে পারে।');
+    add('plan', 'আসল দৃশ্যমানতা ও বর্তমান সরকারি পূর্বাভাস দেখে কেবল নিশ্চিত খোলা সময়ে রুট ঠিক করুন; কুয়াশা কখন কাটবে বা দৃশ্য পরিষ্কার হবে তা নিশ্চিত নয়।');
   }
 
   // 7) তুষার (বিরল; নিরাপত্তা-নোট হিসেবে)
@@ -241,7 +252,7 @@ export function wxAdvice(d: any): Advice {
   // 8) তাপপ্রবাহ
   if (hot) {
     add('dress', 'গরম বেশি — হালকা, ঢিলেঢালা ও সুতির পোশাক; রোদ এড়াতে টুপি বা ওড়না রাখুন।');
-    add('plan', 'দুপুর ১১টা–৩টার তীব্র রোদ এড়িয়ে সকাল-সকাল বা শেষ বিকেলে ঘোরার পরিকল্পনা করুন; মাঝে ছায়ায় বিশ্রাম নিন।');
+    add('plan', 'নিশ্চিত খোলা সময়ের মধ্যেও বেশি গরমে রুট ছোট করুন; মাঝেমধ্যে ছায়ায় বিশ্রাম নিন।');
     add('gear', 'পানীয় জল (পর্যাপ্ত), সানস্ক্রিন, টুপি/ছাতা');
     if (hum >= 80) add('plan', 'আর্দ্রতাও বেশি — ঘাম বেশি হবে, তাই বারবার পানি পান করুন।');
   }
@@ -274,9 +285,9 @@ export function wxAdvice(d: any): Advice {
   // 13) পরিষ্কার/মেঘলা দিনের ইতিবাচক পরিকল্পনা (শুধু বিরূপ আবহাওয়া নেই এমন দিনে)
   if (!adverse && !hot) {
     if (todayKind === 'clear' || todayKind === 'partly') {
-      add('plan', 'আবহাওয়া সুন্দর — স্মৃতিসৌধের খোলা প্রাঙ্গণ ঘোরার জন্য ভালো দিন; সকাল বা শেষ বিকেলের আলোয় ছবি তোলা যায়।');
+      add('plan', 'মডেলে আকাশ পরিষ্কার বা আংশিক মেঘলা; তাপ, UV এবং নিশ্চিত খোলা সময় দেখে সফর ঠিক করুন।');
     } else if (todayKind === 'overcast') {
-      add('plan', 'মেঘলা, সরাসরি রোদ নেই — দীর্ঘক্ষণ ঘোরার জন্য আরামদায়ক; নরম আলোয় ছবিও ভালো হয়।');
+      add('plan', 'মডেলে মেঘলা আকাশ; তাতে কম UV বা আরাম নিশ্চিত নয়। ছবি ও হাঁটার আগে আসল পরিস্থিতি দেখুন।');
     }
   }
   // 14) পানীয় জল (নিরাপদ স্বাভাবিক দিনে)
@@ -288,6 +299,7 @@ export function wxAdvice(d: any): Advice {
 }
 
 export function buildAdviceHtml(d: any): string {
+  d=validateWeather(d);
   if (!d || !d.current) return '';
   const a = wxAdvice(d);
 
@@ -296,7 +308,7 @@ export function buildAdviceHtml(d: any): string {
   if (risksShown.length) {
     riskHtml =
       '<div class="rounded-2xl border border-[#8a2e2a]/25 bg-[#8a2e2a]/10 p-4 sm:p-5">' +
-      '<p class="flex items-center gap-2 text-sm font-black text-[#7c231f]"><span aria-hidden="true">⚠️</span><span>ঝুঁকি ও সতর্কতা</span></p>' +
+      '<p class="flex items-center gap-2 text-sm font-black text-[#7c231f]"><span aria-hidden="true">⚠️</span><span>মডেলভিত্তিক সতর্কতা — সরকারি বার্তা নয়</span></p>' +
       risksShown
         .map((t) => '<p class="mt-1.5 text-sm leading-6 text-[#6e211d]">' + t + '</p>')
         .join('') +
@@ -327,7 +339,7 @@ export function buildAdviceHtml(d: any): string {
   if (blockHtml) blockHtml = '<div class="mt-3 grid gap-3 lg:grid-cols-3">' + blockHtml + '</div>';
   const out = riskHtml + blockHtml;
   if (!out) {
-    return '<p class="text-sm leading-6 text-[#4d5751]">আজকের আবহাওয়ার জন্য বিশেষ কোনো পরামর্শ দরকার নেই — খোলা প্রাঙ্গণে ঘোরার পরিকল্পনা সোজাসুজি করা যাবে।</p>';
+    return '<p class="text-sm leading-6 text-[#4d5751]">বিশেষ মডেল-ভিত্তিক পরামর্শ নেই। আসল আবহাওয়া, প্রবেশ ও স্থানীয় নির্দেশনা যাচাই করুন।</p>';
   }
   return out;
 }

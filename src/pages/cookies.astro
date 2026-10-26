@@ -4,7 +4,7 @@ import LegalLayout from '../layouts/LegalLayout.astro';
 <LegalLayout title="কুকি সেটিংস" description="জাতীয় স্মৃতিসৌধ দর্শনার্থী গাইডে কুকি ও বিশ্লেষণ পছন্দ পরিচালনা করুন।">
   <section>
     <h2 class="text-2xl font-black">আপনার পছন্দ</h2>
-    <p class="mt-3">আমরা কুকি ও অনুরূপ প্রযুক্তি সীমিতভাবে ব্যবহার করি। প্রয়োজনীয় সেটিংস সাইট চালাতে সহায়তা করে। বিশ্লেষণধর্মী প্রযুক্তি কেবল আপনার সম্মতিতে চালু হয়। নিচের পছন্দগুলো এই ব্রাউজারেই সংরক্ষিত থাকবে।</p>
+    <p class="mt-3">আমরা কুকি ও অনুরূপ প্রযুক্তি সীমিতভাবে ব্যবহার করি। প্রয়োজনীয় সেটিংস সাইট চালাতে সহায়তা করে। বিশ্লেষণধর্মী প্রযুক্তি কেবল আপনার সম্মতিতে চালু হয়। সংরক্ষণ সফল ও পুনরায় পড়ে নিশ্চিত হলে পছন্দ এই ব্রাউজারে নথিভুক্ত হয়; সংরক্ষণ ব্যর্থ হলে নিচের অবস্থা দেখুন।</p>
   </section>
 
   <div class="space-y-4" id="cookie-controls">
@@ -28,7 +28,7 @@ import LegalLayout from '../layouts/LegalLayout.astro';
 
     <section class="card rounded-3xl p-6">
       <div class="flex items-start justify-between gap-6">
-        <div><h2 class="text-xl font-black">পছন্দ সংরক্ষণ</h2><p class="mt-2 leading-7 text-[#4b554f]">ভবিষ্যতে থিম বা প্রদর্শন-পছন্দ যোগ হলে সেগুলো মনে রাখার অনুমতি। বর্তমানে সাইটে এমন অতিরিক্ত পছন্দ ব্যবহার করা হয় না।</p></div>
+        <div><h2 class="text-xl font-black">পছন্দ সংরক্ষণ</h2><p class="mt-2 leading-7 text-[#4b554f]">এই সুইচের নির্বাচন নথিভুক্ত হয়; বর্তমানে কোনো থিম বা ভাষা স্বয়ংক্রিয়ভাবে ফিরিয়ে আনার ব্যবস্থা নেই।</p></div>
         <label class="relative mt-1 inline-flex cursor-pointer items-center">
           <span class="sr-only">পছন্দ সংরক্ষণ চালু বা বন্ধ করুন</span>
           <input id="preferences-consent" type="checkbox" class="peer sr-only" />
@@ -47,7 +47,7 @@ import LegalLayout from '../layouts/LegalLayout.astro';
 
   <section>
     <h2 class="text-2xl font-black">সম্মতি পরিচালনা</h2>
-    <p class="mt-3">আপনি যেকোনো সময় এই পাতায় ফিরে পছন্দ পরিবর্তন করতে পারেন। বিশ্লেষণ বন্ধ করলে ভবিষ্যৎ পৃষ্ঠা লোডে গুগল অ্যানালিটিক্স আর চালু হবে না। আগে তৃতীয় পক্ষের কাছে পাঠানো তথ্য তাদের সংরক্ষণনীতির অধীন থাকতে পারে।</p>
+    <p class="mt-3">অনুমতি সফলভাবে সংরক্ষিত হলে বিশ্লেষণ এই পাতাতেই লোড হতে পারে। প্রত্যাহার এই পাতায় সঙ্গে সঙ্গে বিশ্লেষণ বন্ধ করে, আগে পাঠানো তথ্য ফিরিয়ে আনে না। সংরক্ষণ ব্যর্থ হলে বর্তমান পাতায় বন্ধ থাকে; পরের পাতা বা অন্য ট্যাবে পুরোনো অনুমতি থাকতে পারে—অবস্থার বার্তা দেখুন।</p>
     <div class="mt-6 flex flex-wrap gap-3">
       <button id="save-cookie-settings" type="button" class="focus-ring rounded-full bg-[#173d30] px-6 py-3 font-bold text-white">পছন্দ সংরক্ষণ করুন</button>
       <button id="reject-cookie-settings" type="button" class="focus-ring rounded-full border border-black/20 px-6 py-3 font-bold">সব ঐচ্ছিক কুকি প্রত্যাখ্যান করুন</button>
@@ -56,39 +56,6 @@ import LegalLayout from '../layouts/LegalLayout.astro';
   </section>
 
   <script is:inline>
-    (() => {
-      const key = 'nmm_cookie_preferences';
-      const analytics = document.querySelector('#analytics-consent');
-      const preferences = document.querySelector('#preferences-consent');
-      const status = document.querySelector('#cookie-status');
-      const save = document.querySelector('#save-cookie-settings');
-      const reject = document.querySelector('#reject-cookie-settings');
-
-      if (!(analytics instanceof HTMLInputElement) ||
-          !(preferences instanceof HTMLInputElement) ||
-          !(status instanceof HTMLElement) ||
-          !(save instanceof HTMLButtonElement) ||
-          !(reject instanceof HTMLButtonElement)) return;
-
-      try {
-        const stored = JSON.parse(localStorage.getItem(key) || '{}');
-        analytics.checked = stored.analytics === true;
-        preferences.checked = stored.preferences === true;
-      } catch {}
-
-      const write = (value, message) => {
-        localStorage.setItem(key, JSON.stringify({ ...value, savedAtVersion: '2026-09' }));
-        status.textContent = message;
-      };
-
-      save.addEventListener('click', () => {
-        write({ analytics: analytics.checked, preferences: preferences.checked }, 'আপনার পছন্দ সংরক্ষণ করা হয়েছে। নতুন বিশ্লেষণ পছন্দ পরবর্তী পৃষ্ঠা লোড থেকে কার্যকর হবে।');
-      });
-      reject.addEventListener('click', () => {
-        analytics.checked = false;
-        preferences.checked = false;
-        write({ analytics: false, preferences: false }, 'সব ঐচ্ছিক কুকি প্রত্যাখ্যান করা হয়েছে।');
-      });
-    })();
+(()=>{const api=window.nmmAnalytics,a=document.getElementById('analytics-consent'),p=document.getElementById('preferences-consent'),s=document.getElementById('cookie-status');if(!api||!a||!p||!s)return;a.checked=api.get();try{p.checked=JSON.parse(localStorage.getItem('nmm_cookie_preferences')||'{}').preferences===true;}catch{}let failed=false;const save=allow=>{const r=api.set(allow,p.checked);a.checked=r.effective;failed=!r.saved;s.textContent=r.saved?'পছন্দ সংরক্ষিত। অনুমতি দিলে বিশ্লেষণ এখনই লোড হতে পারে; প্রত্যাহার আগে পাঠানো তথ্য ফেরায় না।':r.sharedOff?'এই পাতায় বিশ্লেষণ বন্ধ; সংরক্ষিত প্রত্যাখ্যান নিশ্চিত হয়েছে, কিন্তু চাওয়া পছন্দগুলো সংরক্ষিত হয়নি।':'এই পাতায় বিশ্লেষণ বন্ধ। সংরক্ষণ ব্যর্থ; পরের পাতা বা অন্য ট্যাব পুরোনো অনুমতি পড়তে পারে। আবার চেষ্টা করুন বা সাইটের সংরক্ষণ মুছুন।';};document.getElementById('save-cookie-settings').addEventListener('click',()=>save(a.checked));document.getElementById('reject-cookie-settings').addEventListener('click',()=>{p.checked=false;save(false);});window.addEventListener('storage',event=>{if(event.key==='nmm_cookie_preferences'||event.key===null){a.checked=api.get();if(!failed)s.textContent='';}});})();
   </script>
 </LegalLayout>

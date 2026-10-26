@@ -1,18 +1,4 @@
-/**
- * ক্যানোনিক্যাল ইউআরএল বাধ্যতামূলক করার জন্য হালকা অ্যাসেট-ওয়ার্কার।
- *
- * GSC তথ্য অনুযায়ী একই পাতা তিনটি ভিন্ন ইউআরএলে (https://sritisoudho.com,
- * http://sritisoudho.com, https://www.sritisoudho.com) ইনডেক্স হয়ে ওজন ভাগ হয়ে যাচ্ছিল।
- * এই ওয়ার্কারটি সব প্রকারের অনুরোধকে একটিমাত্র ক্যানোনিক্যাল ইউআরএলে 301 রিডাইরেক্ট করে:
- *
- *   http://sritisoudho.com/*      → https://sritisoudho.com/*      (301)
- *   http://www.sritisoudho.com/*  → https://sritisoudho.com/*      (301)
- *   https://www.sritisoudho.com/* → https://sritisoudho.com/*      (301)
- *
- * এরপর অনুরোধটি static asset binding-এ পাঠানো হয় এবং নিরাপত্তা-হেডার যোগ করা হয়।
- */
 
-const CANONICAL_HOST = 'sritisoudho.com';
 
 // Google Maps এম্বেড (frame-src), GA4 (script/connect-src) ও Open-Meteo পূর্বাভাস (connect-src) অনুমোদিত — অন্য সব বন্ধ।
 const CSP = [
@@ -39,51 +25,7 @@ const SECURITY_HEADERS: Record<string, string> = {
   'Content-Security-Policy': CSP
 };
 
-interface AssetsEnv {
-  ASSETS: { fetch: (request: Request) => Promise<Response> };
-}
-
-const withSecurityHeaders = (response: Response): Response => {
-  const headers = new Headers(response.headers);
-  for (const [key, value] of Object.entries(SECURITY_HEADERS)) headers.set(key, value);
-  return new Response(response.body, {
-    status: response.status,
-    statusText: response.statusText,
-    headers
-  });
-};
-
-export default {
-  async fetch(request: Request, env: AssetsEnv): Promise<Response> {
-    const url = new URL(request.url);
-    const host = url.hostname.toLowerCase();
-
-    if (url.protocol === 'http:' || host === `www.${CANONICAL_HOST}`) {
-      const destination = new URL(request.url);
-      destination.protocol = 'https:';
-      destination.hostname = CANONICAL_HOST;
-      destination.port = '';
-      return new Response(null, {
-        status: 301,
-        headers: {
-          location: destination.toString(),
-          'cache-control': 'public, max-age=86400'
-        }
-      });
-    }
-
-    const response = await env.ASSETS.fetch(request);
-
-    // Worker-থেকে অ্যাসেট সরবরাহের সময় 404-page বান্ডেল না পেলেও যাতে নিজস্ব ৪০৪ পাতাটি দেখা যায়।
-    if (response.status === 404 && request.method === 'GET' && url.pathname !== '/404/') {
-      const notFoundUrl = new URL(request.url);
-      notFoundUrl.pathname = '/404/';
-      const fallback = await env.ASSETS.fetch(new Request(notFoundUrl.toString(), request));
-      if (fallback.ok) {
-        return new Response(fallback.body, { status: 404, headers: withSecurityHeaders(fallback).headers });
-      }
-    }
-
-    return withSecurityHeaders(response);
-  }
-};
+interface Env {ASSETS:{fetch:(r:Request)=>Promise<Response>}}
+const errors=new Set(['/404','/404/','/404.html']);
+async function errorPage(request:Request,env:Env){const url=new URL(request.url);let path='/404',response:Response|undefined;for(let i=0;i<3;i++){response=await env.ASSETS.fetch(new Request(new URL(path,url.origin)));if(![301,302,307,308].includes(response.status))break;const next=new URL(response.headers.get('location')||path,url.origin);if(next.origin!==url.origin||!errors.has(next.pathname))break;path=next.pathname+next.search;}const headers=new Headers(response?.headers);headers.delete('location');headers.delete('content-length');headers.delete('content-encoding');headers.set('x-robots-tag','noindex');headers.set('cache-control','no-store');headers.set('content-type','text/html; charset=utf-8');const body=response&&!([301,302,307,308].includes(response.status))?await response.text():'';return new Response(request.method==='HEAD'?null:body||'<!doctype html><title>404</title><h1>পাতা পাওয়া যায়নি</h1><a href="/">জাতীয় স্মৃতিসৌধ</a>',{status:404,headers});}
+export default {async fetch(request:Request,env:Env){const u=new URL(request.url);if(u.hostname==='www.sritisoudho.com'||(u.hostname==='sritisoudho.com'&&u.protocol==='http:')){u.protocol='https:';u.hostname='sritisoudho.com';return new Response(null,{status:308,headers:{location:u.href}});}let response:Response;if(errors.has(u.pathname))response=await errorPage(request,env);else{response=await env.ASSETS.fetch(request);if(response.status===404)response=await errorPage(request,env);}const secured=new Headers(response.headers);for(const[k,v]of Object.entries(SECURITY_HEADERS))secured.set(k,v);return new Response(request.method==='HEAD'?null:response.body,{status:response.status,headers:secured});}};

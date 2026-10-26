@@ -12,9 +12,9 @@ export const withSiteName = (title: string) => `${title} | ${SITE_NAME}`;
 export const SITE_SHORT_NAME = 'স্মৃতিসৌধ গাইড';
 
 export const LAST_UPDATED = {
-  iso: '2026-09-29',
-  monthWord: 'সেপ্টেম্বর ২০২৬',
-  display: '২৯ সেপ্টেম্বর ২০২৬'
+  iso: '2026-10-25',
+  monthWord: 'অক্টোবর ২০২৬',
+  display: '২৫ অক্টোবর ২০২৬'
 } as const;
 
 export const ATTRACTION = {
@@ -33,32 +33,32 @@ export const ATTRACTION = {
   addressRegionFull: 'ঢাকা–আরিচা মহাসড়ক, সাভার ১৩৪৪',
   country: 'BD',
   plusCode: 'W763+GW',
-  latitude: 23.911298478561065,
-  longitude: 90.2522003771468,
+  latitude: 23.9112985,
+  longitude: 90.2547753,
   googleMapsUrl: 'https://maps.app.goo.gl/kfUxNKYsDusuGj9f6',
   mapsEmbedUrl:
-    "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6487.412098247093!2d90.2522003771468!3d23.911298478561065!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755e8fb9aa0707f%3A0x7f247dcf3afffae9!2sNational%20Martyrs'%20Monument!5e1!3m2!1sbn!2sbd!4v1788484997889!5m2!1sbn!2sbd",
+    "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6487.412098247093!2d90.2547753!3d23.9112985!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755e8fb9aa0707f%3A0x7f247dcf3afffae9!2sNational%20Martyrs'%20Monument!5e1!3m2!1sbn!2sbd!4v1788484997889!5m2!1sbn!2sbd",
   /** Google Maps-এ প্রকাশ্য রেটিং স্ন্যাপশট — সময়ের সঙ্গে বদলাতে পারে */
   rating: {
     value: '4.6',
     bestRating: '5',
-    reviewCount: 23545,
-    reviewCountDisplay: '২৩,৫৪৫',
+    reviewCount: 23641,
+    reviewCountDisplay: '২৩,৬৪১',
     source: 'Google Maps',
-    syncedLabel: '২০২৬ সালের সেপ্টেম্বর'
+    syncedLabel: '২৫ অক্টোবর ২০২৬'
   }
 } as const;
 
 export const VISIT = {
-  opens: '06:00',
-  closes: '18:00',
-  hoursDisplay: 'সকাল ৬টা – সন্ধ্যা ৬টা',
-  hoursNote: 'জাতীয় দিবস, রাষ্ট্রীয় অনুষ্ঠান বা নিরাপত্তাজনিত কারণে সময় বদলাতে পারে',
-  entryLabel: 'বিনা টিকিটে',
-  entryNote: 'প্রকাশিত সরকারি তথ্যে সাধারণ প্রবেশ ফি নেই',
+  opens: '10:00',
+  closes: '17:00',
+  hoursDisplay: 'সকাল ১০টা – বিকেল ৫টা',
+  hoursNote: '২৫ অক্টোবর ২০২৬-এর Google Maps তালিকা; বর্তমান প্রবেশ ও বিশেষ দিনের নিয়ম নিশ্চিত করুন',
+  entryLabel: 'বর্তমান নিয়ম যাচাই করুন',
+  entryNote: 'বর্তমান সাধারণ প্রবেশমূল্য নিশ্চিত করা যায়নি; ফি না দেখানো মানেই বিনামূল্যে নয়',
   suggestedDuration: 'প্রায় দেড়–দুই ঘণ্টা',
-  bestSeason: 'নভেম্বর – ফেব্রুয়ারি',
-  bestTimeOfDay: 'সকাল বা শেষ বিকেল',
+  bestSeason: 'আসল আবহাওয়া দেখে বাছুন',
+  bestTimeOfDay: 'নিশ্চিত খোলা সময়ের মধ্যে',
   /** সড়কপথে, আনুমানিক */
   distanceFromDhakaKm: 35,
   distanceFromGabtoliKm: 20

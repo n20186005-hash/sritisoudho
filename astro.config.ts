@@ -6,7 +6,7 @@ const configuredSite = process.env.SITE_URL?.trim() || 'https://sritisoudho.com'
 
 export default defineConfig({
   site: configuredSite,
-  integrations: [sitemap()],
+  integrations: [sitemap({filter:url=>new URL(url).pathname==='/'})],
   vite: {
     plugins: [tailwindcss()]
   }

@@ -1,73 +1,15 @@
-# জাতীয় স্মৃতিসৌধ দর্শনার্থী গাইড
+# National Martyrs’ Monument visitor guide
 
-সাভারের জাতীয় স্মৃতিসৌধকে কেন্দ্র করে তৈরি বাংলা-ভাষার স্বাধীন, অলাভজনক দর্শনার্থী তথ্য-গাইড।
+Independent, nonofficial, nonprofit Bengali visitor information for Savar. Historical sources, dated third-party Maps information and current visitor notices have different scopes. Confirm access, admission arrangements and essential facilities before travel.
 
-## প্রযুক্তি
+The existing static Astro/Tailwind architecture, native static-assets Worker, build snapshot, direct Open-Meteo browser refresh, PWA and analytics settings are retained. No new language, article collection or banner was added. Default Wrangler configuration targets the existing sritisoudho project and normalizes HTTP/www to the HTTPS apex before static assets.
 
-- Astro 7.3.1
-- Tailwind CSS 4.3.3 (`@tailwindcss/vite`)
-- TypeScript 6.0.3
-- `@astrojs/check` 0.9.10
-- `@astrojs/sitemap` 3.7.4
-- pnpm 11.25.0
-- Node.js 24.20.0 LTS
-- Wrangler 4.129.0
-- Cloudflare Workers Static Assets
+Use the exact declared Node/pnpm versions. Run pnpm install --frozen-lockfile, pnpm check, pnpm build and node scripts/verify-build.mjs. Validate the actual default entry with pnpm exec wrangler deploy --dry-run. Keep the frozen lockfile and supply-chain policy intact.
 
-সব সংস্করণ `package.json`-এ নির্দিষ্টভাবে পিন করা আছে।
+Weather is a model for fixed memorial coordinates in Asia/Dhaka, not an on-site observation or operating notice. Finite values, seven consecutive dates, a whole-response deadline and ten-minute browser cache apply. A forecast does not establish entry, closure or path safety.
 
-## সাইট URL — একমাত্র কনফিগারেশন পয়েন্ট
+Analytics settings immediately withdraw runtime permission, verify the complete stored choice and report save failures. Verified regrant uses one loader.
 
-`SITE_URL` পরিবেশ ভেরিয়েবলটি `astro.config.ts`-এর `site` ফিল্ডের একমাত্র উৎস। ডোমেইন না থাকলেও সাইট build-able রাখার জন্য এটি ঐচ্ছিক। `SITE_URL` খালি থাকলে canonical/absolute Open Graph URL বাদ যায় এবং sitemap integration সক্রিয় হয় না।
+Four original geometric SVG illustrations are labeled as conceptual, not photographs or measured architectural renderings. Their CC0 dedication is published at /CREDITS.txt. Attraction schema does not use these as real photographs.
 
-## চালানো
-
-```bash
-corepack enable
-corepack prepare pnpm@11.25.0 --activate
-pnpm install
-pnpm check
-pnpm build
-```
-
-Cloudflare deploy:
-
-```bash
-pnpm deploy
-```
-
-## ক্যানোনিক্যাল ইউআরএল ও নিরাপত্তা
-
-সাইটটি `wrangler.jsonc`-এর `main` (`src/worker.ts`) দিয়ে Cloudflare Workers Static Assets-এ ডিপ্লয় হয়। ওয়ার্কারটি সব অনুরোধকে একমাত্র ক্যানোনিক্যাল ডোমেইন `https://sritisoudho.com`-এ 301 রিডাইরেক্ট করে:
-
-- `http://sritisoudho.com/*` → `https://sritisoudho.com/*`
-- `https://www.sritisoudho.com/*` → `https://sritisoudho.com/*` (এবং `http://www.` সংস্করণও)
-
-GET ৪০৪ হলে সাইটের নিজস্ব `/404/` পাতা দেখায়। নিরাপত্তা-হেডার (HSTS, CSP, nosniff, Referrer-Policy, COOP ইত্যাদি) `public/_headers`-এও দেওয়া আছে। Cloudflare ড্যাশবোর্ডে **SSL/TLS → Edge Certificates → Always Use HTTPS** চালু রাখার পরামর্শ দেওয়া হয়।
-
-## কুকি ও বিশ্লেষণ
-
-GA4 measurement ID: `G-HXM22WWPKP`। বিশ্লেষণ ডিফল্টভাবে বন্ধ; `/cookies/` পাতায় সম্মতি দেওয়ার পর GA4 লোড হয়।
-
-## নীতিমালা পাতা
-
-- `/privacy/` — গোপনীয়তা নীতি
-- `/terms/` — সেবার শর্তাবলি
-- `/cookies/` — কুকি সেটিংস
-
-এগুলো আলাদা দ্বিতীয়-স্তরের পাতা; modal নয়।
-
-## ছবি
-
-সাইটে ব্যবহৃত JPG ফাইলগুলো `public/images/`-এ স্থানীয়ভাবে রাখা আছে; runtime-এ কোনো external image hotlink নেই। ছবি ও যাচাইকৃত বাস্তব আলোকচিত্র উৎসের নোট `IMAGE-CREDITS.md`-এ আছে।
-
-## প্রধান প্রামাণ্য উৎস
-
-- Bangladesh Tourism Board / Beautiful Bangladesh
-- Savar Upazila Administration
-- Banglapedia
-- Google Maps location/embed data
-
-## গুরুত্বপূর্ণ build নোট
-
-এই কথোপকথনের execution environment npm registry-তে পৌঁছাতে পারেনি। ফলে এখানে `pnpm-lock.yaml` তৈরি ও frozen-lockfile/check/build সফল বলে দাবি করা হয়নি। বিস্তারিত `BUILD-STATUS.md` দেখুন।
+Local validation does not prove publication. Verify the official exact build, required www entrance, current pages/assets, actual errors and mobile/desktop interactions before acceptance.
