@@ -1,17 +1,46 @@
 ---
 import BaseLayout from './BaseLayout.astro';
-import { LAST_UPDATED, withSiteName } from '../data/site';
-interface Props { title: string; description: string; }
-const { title, description } = Astro.props;
+import { LAST_UPDATED, withSiteName, withSiteNameEn } from '../data/site';
+import type { Lang } from '../data/pages/types';
+
+interface Props {
+  title: string;
+  description: string;
+  lang?: Lang;
+  /** 另一语言版本路径，用于 hreflang 互链与语言切换 */
+  altHref?: string;
+}
+
+const { title, description, lang = 'bn', altHref } = Astro.props;
+const isEn = lang === 'en';
 ---
-<BaseLayout title={withSiteName(title)} description={description} noindex>
+<BaseLayout
+  title={isEn ? withSiteNameEn(title) : withSiteName(title)}
+  description={description}
+  lang={lang}
+  altHref={altHref}
+  noindex
+>
   <section class="container-shell py-14 sm:py-20">
     <div class="mx-auto max-w-3xl">
-      <a href="/" class="text-sm font-bold text-[#8a2e2a]">← প্রথম পাতায় ফিরে যান</a>
-      <p class="section-kicker mt-10">নীতি ও তথ্য</p>
+      <a href={isEn ? '/en/' : '/'} class="text-sm font-bold text-[#8a2e2a]">
+        {isEn ? '← Back to the English homepage' : '← প্রথম পাতায় ফিরে যান'}
+      </a>
+      <p class="section-kicker mt-10">{isEn ? 'Policy and information' : 'নীতি ও তথ্য'}</p>
       <h1 class="mt-3 text-4xl font-black tracking-tight sm:text-5xl">{title}</h1>
-      <p class="mt-4 text-sm text-[#5d665f]">সর্বশেষ হালনাগাদ: {LAST_UPDATED.monthWord}</p>
-      <div class="prose-bn mt-10 space-y-9"><slot /></div>
+      <p class="mt-4 text-sm text-[#5d665f]">
+        {isEn ? `Last updated: ${LAST_UPDATED.iso}` : `সর্বশেষ হালনাগাদ: ${LAST_UPDATED.monthWord}`}
+      </p>
+      {
+        altHref && (
+          <p class="mt-2 text-sm font-bold">
+            <a class="text-[#173d30] underline" href={altHref} hreflang={isEn ? 'bn-BD' : 'en'}>
+              {isEn ? 'বাংলায় পড়ুন' : 'Read in English'}
+            </a>
+          </p>
+        )
+      }
+      <div class="prose-content mt-10 space-y-9"><slot /></div>
     </div>
   </section>
 </BaseLayout>

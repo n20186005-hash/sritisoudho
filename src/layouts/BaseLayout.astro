@@ -3,30 +3,48 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import CookieAnalytics from '../components/CookieAnalytics.astro';
 import '../styles/global.css';
-import { SITE_NAME } from '../data/site';
+import { SITE_NAME, SITE_NAME_EN } from '../data/site';
+import type { Lang } from '../data/pages/types';
 
 interface Props {
   title: string;
   description: string;
+  /** 'bn' = 孟加拉语（默认，根路径），'en' = 英语（/en/ 路径） */
+  lang?: Lang;
   image?: string;
   imageAlt?: string;
   noindex?: boolean;
+  /** 另一语言版本的站点内路径（如 '/en/visit/location/'），用于 hreflang 互链与语言切换 */
+  altHref?: string;
   jsonLd?: Record<string, unknown> | Array<Record<string, unknown>>;
 }
 
 const {
   title,
   description,
+  lang = 'bn',
   image = '/images/smritisoudho-reflection.svg',
-  imageAlt = 'ধারণামূলক জ্যামিতিক চিত্র; স্মৃতিসৌধের বাস্তব আলোকচিত্র নয়',
+  imageAlt = lang === 'en'
+    ? 'Original conceptual geometric illustration; not a photograph of the real monument'
+    : 'ধারণামূলক জ্যামিতিক চিত্র; স্মৃতিসৌধের বাস্তব আলোকচিত্র নয়',
   noindex = false,
+  altHref,
   jsonLd
 } = Astro.props;
-const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
+
+const htmlLang = lang === 'en' ? 'en' : 'bn-BD';
+const siteName = lang === 'en' ? SITE_NAME_EN : SITE_NAME;
+// 统一 canonical：目录型路径补尾斜杠，文件型路径（如 .xml/.txt）保持原样
+const rawPath = Astro.url.pathname;
+const normalizedPath = rawPath.endsWith('/') || /\.[a-z0-9]+$/i.test(rawPath) ? rawPath : `${rawPath}/`;
+const canonical = Astro.site ? new URL(normalizedPath, Astro.site).href : undefined;
 const ogImage = Astro.site ? new URL(image, Astro.site).href : undefined;
+const altUrl = altHref && Astro.site ? new URL(altHref, Astro.site).href : undefined;
+const bnUrl = lang === 'bn' ? canonical : altUrl;
+const enUrl = lang === 'en' ? canonical : altUrl;
 ---
 <!doctype html>
-<html lang="bn-BD">
+<html lang={htmlLang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -35,9 +53,13 @@ const ogImage = Astro.site ? new URL(image, Astro.site).href : undefined;
     {noindex && <meta name="robots" content="noindex,follow" />}
     <title>{title}</title>
     {canonical && <link rel="canonical" href={canonical} />}
+    {bnUrl && <link rel="alternate" hreflang="bn-BD" href={bnUrl} />}
+    {enUrl && <link rel="alternate" hreflang="en" href={enUrl} />}
+    {bnUrl && <link rel="alternate" hreflang="x-default" href={bnUrl} />}
     <meta property="og:type" content="website" />
-    <meta property="og:locale" content="bn_BD" />
-    <meta property="og:site_name" content={SITE_NAME} />
+    <meta property="og:locale" content={lang === 'en' ? 'en_US' : 'bn_BD'} />
+    <meta property="og:locale:alternate" content={lang === 'en' ? 'bn_BD' : 'en_US'} />
+    <meta property="og:site_name" content={siteName} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     {canonical && <meta property="og:url" content={canonical} />}
@@ -64,9 +86,9 @@ const ogImage = Astro.site ? new URL(image, Astro.site).href : undefined;
     </script>
   </head>
   <body>
-    <a href="#মূল-বিষয়" class="focus-ring fixed left-3 top-3 z-[100] -translate-y-24 rounded bg-white px-4 py-2 font-bold shadow focus:translate-y-0">মূল বিষয়ে যান</a>
-    <Header />
-    <main id="মূল-বিষয়"><slot /></main>
-    <Footer />
+    <a href="#main-content" class="focus-ring fixed left-3 top-3 z-[100] -translate-y-24 rounded bg-white px-4 py-2 font-bold shadow focus:translate-y-0">{lang === 'en' ? 'Skip to main content' : 'মূল বিষয়ে যান'}</a>
+    <Header lang={lang} altHref={altHref} />
+    <main id="main-content"><slot /></main>
+    <Footer lang={lang} altHref={altHref} />
   </body>
 </html>

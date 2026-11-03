@@ -1,36 +1,65 @@
 ---
 import Logo from './Logo.astro';
-import { LAST_UPDATED, SITE_NAME } from '../data/site';
+import { LAST_UPDATED, SITE_NAME, SITE_NAME_EN } from '../data/site';
+import type { Lang } from '../data/pages/types';
+
+interface Props {
+  lang?: Lang;
+  altHref?: string;
+}
+
+const { lang = 'bn', altHref } = Astro.props;
+const isEn = lang === 'en';
+const home = isEn ? '/en/' : '/';
+const switchHref = altHref || (isEn ? '/' : '/en/');
 ---
 <footer class="mt-20 border-t border-white/10 bg-[#14251e] text-[#f4f0e8]">
   <div class="container-shell grid gap-10 py-14 lg:grid-cols-[1.15fr_.85fr]">
     <div>
       <Logo />
       <div class="mt-6 max-w-3xl space-y-3 text-sm leading-7 text-white/72">
-        <p>এই ওয়েবসাইটটি একটি স্বাধীন, অলাভজনক দর্শনার্থী তথ্য-গাইড প্রকল্প; কোনো সরকারি সংস্থা বা আনুষ্ঠানিক সংগঠনের সঙ্গে এর প্রাতিষ্ঠানিক সম্পর্ক নেই।</p>
-        <p>ইতিহাস ও স্থাপত্যে বাংলাদেশ ট্যুরিজম বোর্ড ও বাংলাপিডিয়ার উল্লিখিত সূত্র ব্যবহার করা হয়েছে। মানচিত্রের তথ্য তারিখসহ তৃতীয় পক্ষের স্ন্যাপশট; চলতি প্রবেশের জন্য সরকারি নির্দেশনা দেখুন।</p>
-        <p>দেখানো নকশাচিত্রগুলো মৌলিক ধারণামূলক চিত্র, বাস্তব আলোকচিত্র বা নির্ভুল জরিপ নয়। <a href="/CREDITS.txt" class="underline">চিত্রের পরিচয় ও অধিকার</a> দেখুন।</p>
-        <p class="text-white/50">সর্বশেষ হালনাগাদ: {LAST_UPDATED.display} · সাভার, ঢাকা, বাংলাদেশ</p>
+        {isEn ? (
+          <>
+            <p>This website is an independent, non-profit visitor information guide. It has no institutional relationship with any government body or official organisation.</p>
+            <p>Historical and architectural details draw on the sources cited from the Bangladesh Tourism Board and Banglapedia. Map information is a dated third-party snapshot; for current access rules check official notices.</p>
+            <p>The illustrations shown are original conceptual drawings, not photographs or accurate surveys. See <a href="/CREDITS.txt" class="underline">image credits and rights</a>.</p>
+            <p class="text-white/50">Last updated: {LAST_UPDATED.iso} · Savar, Dhaka, Bangladesh</p>
+          </>
+        ) : (
+          <>
+            <p>এই ওয়েবসাইটটি একটি স্বাধীন, অলাভজনক দর্শনার্থী তথ্য-গাইড প্রকল্প; কোনো সরকারি সংস্থা বা আনুষ্ঠানিক সংগঠনের সঙ্গে এর প্রাতিষ্ঠানিক সম্পর্ক নেই।</p>
+            <p>ইতিহাস ও স্থাপত্যে বাংলাদেশ ট্যুরিজম বোর্ড ও বাংলাপিডিয়ার উল্লিখিত সূত্র ব্যবহার করা হয়েছে। মানচিত্রের তথ্য তারিখসহ তৃতীয় পক্ষের স্ন্যাপশট; চলতি প্রবেশের জন্য সরকারি নির্দেশনা দেখুন।</p>
+            <p>দেখানো নকশাচিত্রগুলো মৌলিক ধারণামূলক চিত্র, বাস্তব আলোকচিত্র বা নির্ভুল জরিপ নয়। <a href="/CREDITS.txt" class="underline">চিত্রের পরিচয় ও অধিকার</a> দেখুন।</p>
+            <p class="text-white/50">সর্বশেষ হালনাগাদ: {LAST_UPDATED.display} · সাভার, ঢাকা, বাংলাদেশ</p>
+          </>
+        )}
       </div>
     </div>
     <div class="grid content-start gap-7 sm:grid-cols-2">
       <div>
-        <h2 class="text-sm font-bold text-white">তথ্য ও নীতি</h2>
+        <h2 class="text-sm font-bold text-white">{isEn ? 'Information and policy' : 'তথ্য ও নীতি'}</h2>
         <ul class="mt-3 space-y-2 text-sm text-white/70">
-          <li><a class="hover:text-white" href="/privacy/">গোপনীয়তা নীতি</a></li>
-          <li><a class="hover:text-white" href="/terms/">সেবার শর্তাবলি</a></li>
-          <li><a class="hover:text-white" href="/cookies/">কুকি সেটিংস</a></li>
+          <li><a class="hover:text-white" href={isEn ? '/en/privacy/' : '/privacy/'}>{isEn ? 'Privacy policy' : 'গোপনীয়তা নীতি'}</a></li>
+          <li><a class="hover:text-white" href={isEn ? '/en/terms/' : '/terms/'}>{isEn ? 'Terms of use' : 'সেবার শর্তাবলি'}</a></li>
+          <li><a class="hover:text-white" href={isEn ? '/en/cookies/' : '/cookies/'}>{isEn ? 'Cookie settings' : 'কুকি সেটিংস'}</a></li>
         </ul>
       </div>
       <div>
-        <h2 class="text-sm font-bold text-white">প্রামাণ্য উৎস</h2>
+        <h2 class="text-sm font-bold text-white">{isEn ? 'Authoritative sources' : 'প্রামাণ্য উৎস'}</h2>
         <ul class="mt-3 space-y-2 text-sm text-white/70">
-          <li><a class="hover:text-white" target="_blank" rel="noopener noreferrer" href="https://savar.dhaka.gov.bd/pages/tourist-spot/697f940935ce18e1c06b73cd">সাভার উপজেলা প্রশাসন</a></li>
-          <li><a class="hover:text-white" target="_blank" rel="noopener noreferrer" href="https://beautifulbangladesh.gov.bd/loc/dhaka/93">বাংলাদেশ ট্যুরিজম বোর্ড</a></li>
-          <li><a class="hover:text-white" target="_blank" rel="noopener noreferrer" href="https://bn.banglapedia.org/index.php?title=জাতীয়_স্মৃতিসৌধ">বাংলাপিডিয়া</a></li>
+          <li><a class="hover:text-white" target="_blank" rel="noopener noreferrer" href="https://savar.dhaka.gov.bd/pages/tourist-spot/697f940935ce18e1c06b73cd">{isEn ? 'Savar Upazila Administration' : 'সাভার উপজেলা প্রশাসন'}</a></li>
+          <li><a class="hover:text-white" target="_blank" rel="noopener noreferrer" href="https://beautifulbangladesh.gov.bd/loc/dhaka/93">{isEn ? 'Bangladesh Tourism Board' : 'বাংলাদেশ ট্যুরিজম বোর্ড'}</a></li>
+          <li><a class="hover:text-white" target="_blank" rel="noopener noreferrer" href="https://bn.banglapedia.org/index.php?title=জাতীয়_স্মৃতিসৌধ">{isEn ? 'Banglapedia' : 'বাংলাপিডিয়া'}</a></li>
+        </ul>
+      </div>
+      <div class="sm:col-span-2">
+        <h2 class="text-sm font-bold text-white">{isEn ? 'Language' : 'ভাষা'}</h2>
+        <ul class="mt-3 space-y-2 text-sm text-white/70">
+          <li><a class="hover:text-white" href={switchHref} hreflang={isEn ? 'bn-BD' : 'en'}>{isEn ? 'বাংলা সংস্করণ' : 'English version'}</a></li>
+          <li><a class="hover:text-white" href={home}>{isEn ? 'English homepage' : 'প্রথম পাতা'}</a></li>
         </ul>
       </div>
     </div>
   </div>
-  <div class="border-t border-white/10 py-5 text-center text-xs text-white/55">© ২০২৬ {SITE_NAME}। লেখা ও পৃথক চিত্রের অধিকার কৃতিত্বের নথিতে দেখুন।</div>
+  <div class="border-t border-white/10 py-5 text-center text-xs text-white/55">© ২০২৬ {isEn ? SITE_NAME_EN : SITE_NAME}। {isEn ? 'See the credits file for text and individual image rights.' : 'লেখা ও পৃথক চিত্রের অধিকার কৃতিত্বের নথিতে দেখুন।'}</div>
 </footer>

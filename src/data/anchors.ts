@@ -12,5 +12,6 @@ export const anchors = {
   stories: 'কথা',
   weather: 'আবহাওয়া',
   faq: 'জিজ্ঞাসা',
-  sources: 'সূত্র'
+  sources: 'সূত্র',
+  topics: 'বিষয়-তালিকা'
 } as const;

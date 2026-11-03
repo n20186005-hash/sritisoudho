@@ -1,0 +1,211 @@
+---
+// 主题内容页的统一模板：面包屑、直接回答、区块正文、FAQ、相关页面、来源与核实日期。
+import BaseLayout from './BaseLayout.astro';
+import ContentBlocks from '../components/ContentBlocks.astro';
+import type { ContentPage, Lang } from '../data/pages/types';
+import { groupLabel, pathFor, sectionLabel } from '../data/pages/sections';
+import { getPage } from '../data/pages';
+import { ATTRACTION, LAST_UPDATED, OFFICIAL_SOURCES, withSiteName, withSiteNameEn } from '../data/site';
+
+interface Props {
+  page: ContentPage;
+  lang: Lang;
+}
+
+const { page, lang } = Astro.props;
+const isEn = lang === 'en';
+const content = page[lang];
+const otherLang: Lang = isEn ? 'bn' : 'en';
+
+const title = isEn ? withSiteNameEn(content.title) : withSiteName(content.title);
+const altHref = pathFor(page.slug, otherLang);
+const pageUrl = Astro.site ? new URL(pathFor(page.slug, lang), Astro.site).href : undefined;
+
+const ui = {
+  home: isEn ? 'Home' : 'প্রথম পাতা',
+  updated: isEn ? 'Content checked' : 'তথ্য যাচাই',
+  answer: isEn ? 'In short' : 'সংক্ষেপে',
+  contents: isEn ? 'On this page' : 'এই পাতায়',
+  faq: isEn ? 'Common questions' : 'সাধারণ জিজ্ঞাসা',
+  related: isEn ? 'Related pages' : 'সম্পর্কিত বিষয়',
+  sources: isEn ? 'Sources' : 'উৎস',
+  readIn: isEn ? 'বাংলায় পড়ুন' : 'Read in English',
+  mapCta: isEn ? 'Open in Google Maps' : 'Google Maps-এ খুলুন',
+  verifiedNote: isEn
+    ? 'Dynamic details such as opening hours, entry rules and traffic can change without notice. Verify with the managing authority before travelling.'
+    : 'খোলার সময়, প্রবেশের নিয়ম ও যান চলাচলের মতো বিষয় পূর্বঘোষণা ছাড়াই বদলাতে পারে। যাত্রার আগে ব্যবস্থাপনা কর্তৃপক্ষের সঙ্গে যাচাই করুন।'
+};
+
+const dateLabel = (iso: string) => {
+  const [y, m, d] = iso.split('-').map(Number);
+  const date = new Date(Date.UTC(y, m - 1, d));
+  return new Intl.DateTimeFormat(isEn ? 'en-GB' : 'bn-BD', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC'
+  }).format(date);
+};
+
+const headings = content.blocks
+  .map((block, index) => ({ block, index }))
+  .filter(entry => entry.block.type === 'h2')
+  .map(entry => ({ id: `sec-${entry.index}`, text: (entry.block as { text: string }).text }));
+
+const sources = (content.sources ?? OFFICIAL_SOURCES.map(source => ({ name: isEn ? source.nameEn : source.name, url: source.url })));
+
+const relatedPages = (page.related ?? [])
+  .map(slug => getPage(slug))
+  .filter((item): item is ContentPage => Boolean(item));
+
+const webpageSchema: Record<string, unknown> = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  ...(pageUrl ? { '@id': `${pageUrl}#webpage` } : {}),
+  ...(pageUrl ? { url: pageUrl } : {}),
+  name: content.title,
+  description: content.description,
+  inLanguage: isEn ? 'en' : 'bn-BD',
+  dateModified: page.updated,
+  isPartOf: Astro.site ? { '@type': 'WebSite', name: withSiteName(''), url: new URL('/', Astro.site).href } : undefined,
+  about: {
+    '@type': 'TouristAttraction',
+    name: ATTRACTION.nameBn,
+    alternateName: ATTRACTION.nameEn
+  }
+};
+
+const breadcrumbSchema: Record<string, unknown> = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: ui.home,
+      item: Astro.site ? new URL(isEn ? '/en/' : '/', Astro.site).href : undefined
+    },
+    { '@type': 'ListItem', position: 2, name: content.h1, ...(pageUrl ? { item: pageUrl } : {}) }
+  ]
+};
+
+const faqSchema = content.faq?.length
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: content.faq.map(item => ({
+        '@type': 'Question',
+        name: item.q,
+        acceptedAnswer: { '@type': 'Answer', text: item.a }
+      }))
+    }
+  : undefined;
+---
+<BaseLayout
+  title={title}
+  description={content.description}
+  lang={lang}
+  altHref={altHref}
+  jsonLd={[webpageSchema, breadcrumbSchema, ...(faqSchema ? [faqSchema] : [])]}
+>
+  <article class="container-shell py-12 sm:py-16">
+    <div class="mx-auto max-w-4xl">
+      <nav aria-label={isEn ? 'Breadcrumb' : 'ব্রেডক্রাম্ব'} class="text-sm font-semibold text-[#5d665f]">
+        <a class="hover:text-[#8a2e2a]" href={isEn ? '/en/' : '/'}>{ui.home}</a>
+        <span aria-hidden="true" class="mx-2">›</span>
+        <span>{groupLabel(page.section, lang)}</span>
+        <span aria-hidden="true" class="mx-2">›</span>
+        <span class="text-[#8a2e2a]">{sectionLabel(page.section, lang)}</span>
+      </nav>
+
+      <h1 class="mt-6 text-4xl font-black leading-tight tracking-tight sm:text-5xl">{content.h1}</h1>
+
+      <p class="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[#5d665f]">
+        <span>{ui.updated}: {dateLabel(page.updated)}</span>
+        <span aria-hidden="true">·</span>
+        <a class="font-bold text-[#173d30] underline" href={altHref} hreflang={isEn ? 'bn-BD' : 'en'}>{ui.readIn}</a>
+      </p>
+
+      <div class="mt-8 rounded-3xl border border-[#173d30]/20 bg-[#173d30] p-6 text-white sm:p-7">
+        <p class="text-xs font-black tracking-[.08em] text-[#e1b7a8]">{ui.answer}</p>
+        <p class="mt-3 text-lg leading-8 text-white/92 sm:text-xl">{content.answer}</p>
+      </div>
+
+      {headings.length >= 3 && (
+        <nav aria-label={ui.contents} class="mt-10 rounded-3xl border border-black/10 bg-white/70 p-6">
+          <p class="text-sm font-black text-[#8a2e2a]">{ui.contents}</p>
+          <ul class="mt-3 grid gap-2 sm:grid-cols-2">
+            {headings.map(item => (
+              <li>
+                <a class="text-[15px] font-semibold leading-7 underline decoration-black/20 hover:text-[#8a2e2a]" href={`#${item.id}`}>{item.text}</a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
+
+      <div class="prose-content mt-2">
+        <ContentBlocks blocks={content.blocks} lang={lang} />
+      </div>
+
+      {content.faq?.length ? (
+        <section class="mt-14" aria-label={ui.faq}>
+          <h2 class="text-3xl font-black sm:text-4xl">{ui.faq}</h2>
+          <div class="mt-6 divide-y divide-black/10 border-y border-black/10">
+            {content.faq.map((item, i) => (
+              <details class="group py-5" open={i === 0}>
+                <summary class="focus-ring flex cursor-pointer list-none items-start justify-between gap-6 rounded-lg text-lg font-black">
+                  <span>{item.q}</span>
+                  <span aria-hidden="true" class="text-[#8a2e2a] transition group-open:rotate-45">＋</span>
+                </summary>
+                <p class="mt-3 max-w-3xl leading-8 text-[#505a54]">{item.a}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {relatedPages.length > 0 && (
+        <section class="mt-14" aria-label={ui.related}>
+          <h2 class="text-2xl font-black sm:text-3xl">{ui.related}</h2>
+          <ul class="mt-5 grid gap-4 sm:grid-cols-2">
+            {relatedPages.map(item => (
+              <li>
+                <a class="card flex h-full flex-col rounded-2xl p-5 no-underline transition hover:border-[#8a2e2a]/40" href={pathFor(item.slug, lang)}>
+                  <span class="text-xs font-black tracking-wide text-[#8a2e2a]">{sectionLabel(item.section, lang)}</span>
+                  <span class="mt-2 font-black leading-7">{item[lang].h1}</span>
+                  <span class="mt-2 text-sm leading-6 text-[#5d665f]">{item[lang].description}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <section class="mt-14 rounded-3xl bg-[#ded6c9] p-6 sm:p-8" aria-label={ui.sources}>
+        <h2 class="text-2xl font-black">{ui.sources}</h2>
+        <ul class="mt-4 space-y-2 text-[15px]">
+          {sources.map(source => (
+            <li>
+              <a class="font-semibold underline" href={source.url} target="_blank" rel="noopener noreferrer">{source.name}</a>
+            </li>
+          ))}
+          <li>
+            <a class="font-semibold underline" href={ATTRACTION.googleMapsUrl} target="_blank" rel="noopener noreferrer">
+              {isEn ? 'Google Maps listing (navigation and last-minute checks)' : 'Google Maps তালিকা (নেভিগেশন ও যাত্রার আগের যাচাই)'}
+            </a>
+          </li>
+        </ul>
+        <p class="mt-4 max-w-3xl text-sm leading-6 text-[#5d665f]">{ui.verifiedNote}</p>
+        <p class="mt-2 text-sm text-[#5d665f]">
+          {isEn ? 'Site-wide content last updated' : 'সাইটের সামগ্রিক হালনাগাদ'}: {LAST_UPDATED.display}
+        </p>
+      </section>
+
+      <p class="mt-10 flex flex-wrap gap-3 text-sm font-bold">
+        <a class="rounded-full border border-black/15 px-5 py-3 no-underline hover:border-[#8a2e2a] hover:text-[#8a2e2a]" href={isEn ? '/en/' : '/'}>{isEn ? '← Back to the homepage' : '← প্রথম পাতায় ফিরে যান'}</a>
+        <a class="rounded-full bg-[#173d30] px-5 py-3 text-white no-underline hover:bg-[#0f2d23]" href={ATTRACTION.googleMapsUrl} target="_blank" rel="noopener noreferrer">{ui.mapCta}</a>
+      </p>
+    </div>
+  </article>
+</BaseLayout>

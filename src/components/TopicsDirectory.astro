@@ -1,0 +1,52 @@
+---
+// 首页目录组件：把 36 个主题页按四个栏目分组呈现，作为首页进入内容板块的入口。
+import { allPages } from '../data/pages';
+import { GROUPS, groupOf, pathFor, sectionLabel } from '../data/pages/sections';
+import type { Lang } from '../data/pages/types';
+
+interface Props {
+  lang: Lang;
+  kicker?: string;
+  heading?: string;
+  intro?: string;
+}
+
+const { lang, kicker, heading, intro } = Astro.props;
+const isEn = lang === 'en';
+const priorityLabel = (priority: string) => {
+  if (isEn) return priority === 'P1' ? 'Core guide' : priority === 'P2' ? 'Practical guide' : 'Specialist guide';
+  return priority === 'P1' ? 'মূল গাইড' : priority === 'P2' ? 'ব্যবহারিক গাইড' : 'বিশেষ গাইড';
+};
+---
+<section class="container-shell py-18 sm:py-24">
+  <div class="max-w-3xl">
+    <p class="section-kicker">{kicker || (isEn ? 'All topics' : 'সব বিষয়')}</p>
+    <h2 class="mt-3 text-4xl font-black leading-tight sm:text-5xl">
+      {heading || (isEn ? 'Detailed guides by section' : 'বিভাগ অনুযায়ী বিস্তারিত গাইড')}
+    </h2>
+    <p class="mt-5 text-lg leading-8 text-[#505a54]">
+      {intro || (isEn
+        ? `Each page below answers one visitor question in depth and links to the official sources used. ${allPages.length} topic pages in total.`
+        : `নিচের প্রতিটি পাতা একটি নির্দিষ্ট দর্শনার্থী-প্রশ্নের বিস্তারিত উত্তর দেয় এবং ব্যবহৃত সরকারি সূত্রের সঙ্গে সংযুক্ত। মোট ${allPages.length.toLocaleString('bn-BD')} টি বিষয়-পাতা।`)}
+    </p>
+  </div>
+
+  <div class="mt-12 grid gap-8 lg:grid-cols-2">
+    {GROUPS.map(group => (
+      <section class="card rounded-[2rem] p-7">
+        <p class="text-sm font-black tracking-wide text-[#8a2e2a]">{group[lang]}</p>
+        <p class="mt-2 text-sm leading-6 text-[#5d665f]">{isEn ? group.enNote : group.bnNote}</p>
+        <ul class="mt-5 divide-y divide-black/8">
+          {allPages.filter(page => groupOf(page.section).key === group.key).map(page => (
+            <li>
+              <a class="flex flex-wrap items-baseline gap-x-3 gap-y-1 py-3 no-underline hover:text-[#8a2e2a]" href={pathFor(page.slug, lang)}>
+                <span class="font-black leading-7">{page[lang].h1}</span>
+                <span class="text-xs font-bold text-[#5d665f]">{sectionLabel(page.section, lang)} · {priorityLabel(page.priority)}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+  </div>
+</section>

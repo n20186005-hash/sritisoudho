@@ -7,6 +7,7 @@ import StoriesSection from '../components/StoriesSection.astro';
 import Weather from '../components/Weather.astro';
 import RouteSection from '../components/RouteSection.astro';
 import SourcesSection from '../components/SourcesSection.astro';
+import TopicsDirectory from '../components/TopicsDirectory.astro';
 import { ATTRACTION, FACTS, LAST_UPDATED, OFFICIAL_SOURCES, SITE_NAME, VISIT } from '../data/site';
 
 const homeUrl = Astro.site ? new URL('/', Astro.site).href : undefined;
@@ -303,6 +304,10 @@ const webpageSchema: Record<string, unknown> = {
   <StoriesSection />
 
   <Weather />
+
+  <div id={anchors.topics} class="scroll-mt-28 border-t border-black/10 bg-[#f4f0e8]">
+    <TopicsDirectory lang="bn" />
+  </div>
 
   <section id={anchors.faq} class="container-shell py-18 sm:py-24">
     <div class="mx-auto max-w-4xl">

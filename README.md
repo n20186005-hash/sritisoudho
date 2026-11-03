@@ -1,8 +1,8 @@
 # National Martyrs’ Monument visitor guide
 
-Independent, nonofficial, nonprofit Bengali visitor information for Savar. Historical sources, dated third-party Maps information and current visitor notices have different scopes. Confirm access, admission arrangements and essential facilities before travel.
+Independent, nonofficial, nonprofit visitor information for Savar, published in Bengali and English. Bengali pages are served at the root; their English mirrors are served under /en/ and cross-linked with hreflang (bn-BD, en, x-default). Historical sources, dated third-party Maps information and current visitor notices have different scopes. Confirm access, admission arrangements and essential facilities before travel.
 
-The existing static Astro/Tailwind architecture, native static-assets Worker, build snapshot, direct Open-Meteo browser refresh, PWA and analytics settings are retained. No new language, article collection or banner was added. Default Wrangler configuration targets the existing sritisoudho project and normalizes HTTP/www to the HTTPS apex before static assets.
+The site is bilingual. Content lives as typed data under src/data/pages and is rendered by a single dynamic route, so the Bengali and English versions stay 1:1. Thirty-six visitor topic pages are grouped under visit, transport, history, architecture, events, nearby and itineraries. The existing static Astro/Tailwind architecture, native static-assets Worker, build snapshot, direct Open-Meteo browser refresh, PWA and analytics settings are retained. Default Wrangler configuration targets the existing sritisoudho project and normalizes HTTP/www to the HTTPS apex before static assets.
 
 Use the exact declared Node/pnpm versions. Run pnpm install --frozen-lockfile, pnpm check, pnpm build and node scripts/verify-build.mjs. Validate the actual default entry with pnpm exec wrangler deploy --dry-run. Keep the frozen lockfile and supply-chain policy intact.
 

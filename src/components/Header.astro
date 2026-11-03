@@ -1,20 +1,51 @@
 ---
 import { anchors } from '../data/anchors';
+import { ATTRACTION } from '../data/site';
+import type { Lang } from '../data/pages/types';
 import Logo from './Logo.astro';
+
+interface Props {
+  lang?: Lang;
+  altHref?: string;
+}
+
+const { lang = 'bn', altHref } = Astro.props;
+const home = lang === 'en' ? '/en/' : '/';
+const switchHref = altHref || (lang === 'en' ? '/' : '/en/');
+const switchLabel = lang === 'en' ? 'বাংলা' : 'English';
+const switchAria = lang === 'en' ? 'বাংলা সংস্করণে দেখুন' : 'View the English version';
+
+const items = lang === 'en'
+  ? [
+      { href: '/en/#topics', label: 'Topics' },
+      { href: '/en/#practical', label: 'Practical info' },
+      { href: '/en/#history', label: 'History' },
+      { href: '/en/#nearby', label: 'Nearby' },
+      { href: '/en/#faq', label: 'FAQ' }
+    ]
+  : [
+      { href: '/#' + anchors.memory, label: 'ইতিহাস' },
+      { href: '/#' + anchors.architecture, label: 'স্থাপত্য' },
+      { href: '/#' + anchors.visit, label: 'ভ্রমণ' },
+      { href: '/#' + anchors.facilities, label: 'সুবিধা' },
+      { href: '/#' + anchors.transport, label: 'যাতায়াত' },
+      { href: '/#' + anchors.nearby, label: 'আশপাশ' },
+      { href: '/#' + anchors.weather, label: 'আবহাওয়া' },
+      { href: '/#' + anchors.faq, label: 'প্রশ্ন' },
+      { href: '/#' + anchors.topics, label: 'বিষয়সমূহ' }
+    ];
 ---
 <header class="sticky top-0 z-50 border-b border-black/10 bg-[#f4f0e8]/95 backdrop-blur">
   <div class="container-shell flex min-h-18 items-center justify-between gap-5 py-3">
-    <a href="/" class="focus-ring rounded-lg no-underline" aria-label="প্রথম পাতায় ফিরে যান"><Logo compact /></a>
-    <nav aria-label="প্রধান নেভিগেশন" class="hidden items-center gap-3.5 text-[13px] font-semibold xl:flex">
-      <a class="focus-ring rounded hover:text-[#8a2e2a]" href={'/#' + anchors.memory}>ইতিহাস</a>
-      <a class="focus-ring rounded hover:text-[#8a2e2a]" href={'/#' + anchors.architecture}>স্থাপত্য</a>
-      <a class="focus-ring rounded hover:text-[#8a2e2a]" href={'/#' + anchors.visit}>ভ্রমণ</a>
-      <a class="focus-ring rounded hover:text-[#8a2e2a]" href={'/#' + anchors.facilities}>সুবিধা</a>
-      <a class="focus-ring rounded hover:text-[#8a2e2a]" href={'/#' + anchors.transport}>যাতায়াত</a>
-      <a class="focus-ring rounded hover:text-[#8a2e2a]" href={'/#' + anchors.nearby}>আশপাশ</a>
-      <a class="focus-ring rounded hover:text-[#8a2e2a]" href={'/#' + anchors.weather}>আবহাওয়া</a>
-      <a class="focus-ring rounded hover:text-[#8a2e2a]" href={'/#' + anchors.faq}>প্রশ্ন</a>
+    <a href={home} class="focus-ring rounded-lg no-underline" aria-label={lang === 'en' ? 'Back to the English homepage' : 'প্রথম পাতায় ফিরে যান'}><Logo compact /></a>
+    <nav aria-label={lang === 'en' ? 'Main navigation' : 'প্রধান নেভিগেশন'} class="hidden items-center gap-3.5 text-[13px] font-semibold xl:flex">
+      {items.map(item => (
+        <a class="focus-ring rounded hover:text-[#8a2e2a]" href={item.href}>{item.label}</a>
+      ))}
     </nav>
-    <a href="https://maps.app.goo.gl/kfUxNKYsDusuGj9f6" rel="noopener noreferrer" target="_blank" class="focus-ring rounded-full bg-[#173d30] px-4 py-2 text-[13px] font-bold text-white no-underline hover:bg-[#0f2d23]">মানচিত্র খুলুন</a>
+    <div class="flex items-center gap-2">
+      <a href={switchHref} hreflang={lang === 'en' ? 'bn-BD' : 'en'} class="focus-ring rounded-full border border-[#173d30]/25 px-3 py-2 text-[13px] font-bold text-[#173d30] no-underline hover:bg-[#173d30]/10" aria-label={switchAria}>{switchLabel}</a>
+      <a href={ATTRACTION.googleMapsUrl} rel="noopener noreferrer" target="_blank" class="focus-ring rounded-full bg-[#173d30] px-4 py-2 text-[13px] font-bold text-white no-underline hover:bg-[#0f2d23]">{lang === 'en' ? 'Open map' : 'মানচিত্র খুলুন'}</a>
+    </div>
   </div>
 </header>

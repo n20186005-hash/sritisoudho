@@ -11,6 +11,11 @@ export const withSiteName = (title: string) => `${title} | ${SITE_NAME}`;
 
 export const SITE_SHORT_NAME = 'স্মৃতিসৌধ গাইড';
 
+/** ইংরেজি সংস্করণের স্টেশন-নাম (`/en/` পাতার `<title>`-এ ব্যবহৃত) */
+export const SITE_NAME_EN = 'National Martyrs’ Monument, Savar — Visitor Guide';
+
+export const withSiteNameEn = (title: string) => `${title} | ${SITE_NAME_EN}`;
+
 export const LAST_UPDATED = {
   iso: '2026-10-25',
   monthWord: 'অক্টোবর ২০২৬',
@@ -31,6 +36,9 @@ export const ATTRACTION = {
   region: 'ঢাকা',
   postalCode: '1344',
   addressRegionFull: 'ঢাকা–আরিচা মহাসড়ক, সাভার ১৩৪৪',
+  streetAddressEn: 'Dhaka–Aricha Highway, Nabinagar',
+  localityEn: 'Savar',
+  addressRegionFullEn: 'Dhaka–Aricha Highway, Savar 1344, Bangladesh',
   country: 'BD',
   plusCode: 'W763+GW',
   latitude: 23.9112985,
@@ -84,14 +92,17 @@ export const FACTS = {
 export const OFFICIAL_SOURCES = [
   {
     name: 'সাভার উপজেলা প্রশাসন',
+    nameEn: 'Savar Upazila Administration',
     url: 'https://savar.dhaka.gov.bd/pages/tourist-spot/697f940935ce18e1c06b73cd'
   },
   {
     name: 'বাংলাদেশ ট্যুরিজম বোর্ড · Beautiful Bangladesh',
+    nameEn: 'Bangladesh Tourism Board · Beautiful Bangladesh',
     url: 'https://beautifulbangladesh.gov.bd/loc/dhaka/93'
   },
   {
     name: 'বাংলাপিডিয়া',
+    nameEn: 'Banglapedia',
     url: 'https://bn.banglapedia.org/index.php?title=জাতীয়_স্মৃতিসৌধ'
   }
 ] as const;

@@ -1,0 +1,331 @@
+---
+// English-language homepage served at /en/.
+// Mirrors the Bengali homepage for visitors who read English, without duplicating
+// the 36 topic pages (those live at /en/<slug>/ and are linked from the directory below).
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TopicsDirectory from './TopicsDirectory.astro';
+import { allPages } from '../data/pages';
+import { ATTRACTION, LAST_UPDATED, OFFICIAL_SOURCES, SITE_NAME_EN, VISIT, withSiteNameEn } from '../data/site';
+
+const homeUrl = Astro.site ? new URL('/en/', Astro.site).href : undefined;
+const heroUrl = Astro.site ? new URL('/images/smritisoudho-reflection.svg', Astro.site).href : undefined;
+
+const title = withSiteNameEn('National Martyrs’ Monument, Savar: hours, location and height');
+const description =
+  'A visitor guide to the National Martyrs’ Monument at Savar, Bangladesh: where it is, opening hours as last listed, height, history, how to get there from Dhaka and what to verify before you go.';
+
+const quickFacts = [
+  ['Opening hours', `${VISIT.opens}–${VISIT.closes}`, 'As last seen on the Google Maps listing (25 Oct 2026); verify on the day.'],
+  ['Entry', 'Check current rules', 'The current general admission rule could not be confirmed; no fee shown does not prove free entry.'],
+  ['Location', `${ATTRACTION.localityEn}, Savar`, `Dhaka–Aricha Highway · Plus Code ${ATTRACTION.plusCode}`],
+  ['From Dhaka', 'about 35 km', 'Straight-line distance; road distance and time vary with the route and traffic.'],
+  ['Height of the main structure', 'about 150 ft (45.7 m)', 'Seven pairs of triangular concrete walls on one axis.'],
+  ['Map rating', `${ATTRACTION.rating.value} / ${ATTRACTION.rating.bestRating}`, `${ATTRACTION.rating.reviewCount.toLocaleString('en-US')} reviews · Google Maps, 25 Oct 2026`]
+];
+
+const faq = [
+  {
+    q: 'When is the National Martyrs’ Monument open, and until what time?',
+    a: 'A Google Maps listing on 25 October 2026 showed 10:00–17:00 seven days a week. That is a third-party listing, not a permanent authority notice. Entry can change on national days, during preparations or for security, so confirm current local guidance before travelling.'
+  },
+  {
+    q: 'Where is the National Martyrs’ Monument located?',
+    a: 'Beside the Dhaka–Aricha Highway in Savar, Dhaka District; the map address is Savar 1344, Plus Code W763+GW. The exact point is 23.9112985° N, 90.2547753° E — that is the structure, not the centre of the map view.'
+  },
+  {
+    q: 'How tall is the monument?',
+    a: 'According to Banglapedia, the highest point of the main structure is 150 ft (45.72 m). The complex covers about 34 hectares, with a further green area of about 10 hectares outside it — the two areas are not the same.'
+  },
+  {
+    q: 'Does the monument have another name?',
+    a: '“National Martyrs’ Memorial” or “Monument” and “Jatiyo Smriti Soudho” are names for the same memorial in Savar — not separate destinations.'
+  },
+  {
+    q: 'How far is it from Dhaka?',
+    a: 'The tourism board and Banglapedia describe the location as about 35 km north-west of Dhaka. Actual distance and time vary with your starting point, the road chosen and traffic; this is not a guaranteed journey time.'
+  },
+  {
+    q: 'Who designed it, and when was it inaugurated?',
+    a: 'Architect Syed Mainul Hossain’s design was selected from a 1978 competition of 57 entries. The tourism board states an inauguration on 16 December 1982; Banglapedia describes the Public Works Department supervising construction.'
+  },
+  {
+    q: 'Is there a ticket to enter?',
+    a: 'The current general admission price or ticket rule could not be confirmed. Do not read the absence of a listed fee as proof of free entry; check current rules with the management.'
+  },
+  {
+    q: 'How much time should I allow?',
+    a: 'One-and-a-half to two hours can be a starting point for a flexible plan. Shorten it according to which parts are open, your walking pace, breaks and security control; seeing every part or a complete tour is not guaranteed.'
+  },
+  {
+    q: 'How do I get there by public transport from Dhaka?',
+    a: 'Use a current map for the Savar–Nabinagar area and confirm the current bus destination, the stop to get off, the final walk and the return arrangement with the operator. This guide does not confirm any specific running bus or timetable.'
+  },
+  {
+    q: 'What should I know about visiting on 26 March or 16 December?',
+    a: 'Official programmes or preparations can change entry, vehicle movement and security control. Do not rely on a normal listing’s hours — check the government announcement for that day and keep a backup plan.'
+  },
+  {
+    q: 'Are there toilets, food, parking or accommodation nearby?',
+    a: 'Confirm necessary toilets, drinking water, a suitable entrance and permitted parking separately. The existence of a facility in the construction history does not prove it is open today or usable by everyone. This list is not a confirmed service list.'
+  },
+  {
+    q: 'Why seven pairs of walls? What does the monument mean?',
+    a: 'The tourism board links the seven pairs of walls to the chapters of struggle in 1952, 1954, 1956, 1962, 1966, 1969 and 1971. Banglapedia explains the arrangement of seven triangular walls of different folded proportions.'
+  }
+];
+
+const attractionSchema: Record<string, unknown> = {
+  '@context': 'https://schema.org',
+  '@type': 'TouristAttraction',
+  ...(homeUrl ? { '@id': homeUrl + '#attraction' } : {}),
+  name: ATTRACTION.nameEn,
+  alternateName: [...ATTRACTION.alternateNames],
+  description:
+    'An independent visitor information guide to the National Martyrs’ Monument in Savar, Bangladesh, built in memory of those who died in the 1971 Liberation War.',
+  amenityFeature: [{ '@type': 'LocationFeatureSpecification', name: 'Height of the main structure', value: 'about 150 ft (45.7 m)' }],
+  ...(homeUrl ? { url: homeUrl } : {}),
+  hasMap: ATTRACTION.googleMapsUrl,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: ATTRACTION.streetAddressEn,
+    addressLocality: ATTRACTION.localityEn,
+    addressRegion: 'Dhaka',
+    postalCode: ATTRACTION.postalCode,
+    addressCountry: ATTRACTION.country
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: ATTRACTION.latitude,
+    longitude: ATTRACTION.longitude
+  },
+  sameAs: [ATTRACTION.googleMapsUrl, OFFICIAL_SOURCES[1].url, OFFICIAL_SOURCES[2].url]
+};
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.map(item => ({
+    '@type': 'Question',
+    name: item.q,
+    acceptedAnswer: { '@type': 'Answer', text: item.a }
+  }))
+};
+
+const webpageSchema: Record<string, unknown> = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  url: homeUrl,
+  name: title,
+  description,
+  inLanguage: 'en',
+  dateModified: LAST_UPDATED.iso,
+  isPartOf: { '@type': 'WebSite', name: SITE_NAME_EN, url: homeUrl },
+  ...(heroUrl ? { primaryImageOfPage: { '@type': 'ImageObject', url: heroUrl, caption: 'Original conceptual illustration; not a photograph' } } : {})
+};
+---
+<BaseLayout
+  title={title}
+  description={description}
+  lang="en"
+  altHref="/"
+  jsonLd={[attractionSchema, faqSchema, webpageSchema]}
+>
+  <section class="relative min-h-[78vh] overflow-hidden bg-[#14251e] text-white">
+    <img src="/images/smritisoudho-reflection.svg" alt="Original conceptual illustration — a geometric suggestion of a memorial, path and water; not a photograph" class="absolute inset-0 h-full w-full object-cover" width="1280" height="853" />
+    <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/45 to-black/15"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-[#14251e] via-transparent to-transparent"></div>
+    <div class="container-shell relative flex min-h-[78vh] items-end py-14 sm:py-20">
+      <div class="max-w-4xl">
+        <p class="mb-5 inline-flex rounded-full border border-white/30 bg-black/25 px-4 py-2 text-sm font-semibold backdrop-blur">Savar · Dhaka · Bangladesh’s national memorial</p>
+        <h1 class="text-5xl font-black leading-[1.06] tracking-tight sm:text-7xl lg:text-8xl">National Martyrs’<br/>Monument
+<span class="mt-4 block text-2xl font-black leading-snug tracking-normal sm:text-3xl">(জাতীয় স্মৃতিসৌধ, Savar)</span></h1>
+        <p class="mt-6 max-w-2xl text-lg leading-8 text-white/84 sm:text-xl">The National Martyrs’ Monument is the memorial to those who died in Bangladesh’s 1971 Liberation War. Its seven pairs of triangular walls, reflecting pool, gardens and central axis form a quiet place of remembrance.</p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="#topics" class="focus-ring rounded-full bg-[#b53a35] px-6 py-3 font-bold text-white no-underline hover:bg-[#9d302c]">All topic guides</a>
+          <a href="#practical" class="focus-ring rounded-full border border-white/35 bg-white/10 px-6 py-3 font-bold text-white no-underline backdrop-blur hover:bg-white/20">Practical information</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <p class="container-shell mt-3 text-sm text-[#505a54]">The background is an original conceptual illustration, not a photograph of the monument.</p>
+
+  <section class="border-b border-black/10 bg-[#eee8dc]" aria-label="Key facts at a glance">
+    <div class="container-shell grid gap-3 py-8 sm:grid-cols-2 lg:grid-cols-3">
+      {quickFacts.map(([label, value, note]) => (
+        <div class="rounded-2xl border border-black/10 bg-white/70 px-5 py-4">
+          <p class="text-xs font-bold tracking-wide text-[#8a2e2a]">{label}</p>
+          <p class="mt-1 text-lg font-black leading-7">{value}</p>
+          <p class="mt-1 text-xs leading-5 text-black/55">{note}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section id="practical" class="bg-[#173d30] py-18 text-white sm:py-24">
+    <div class="container-shell">
+      <p class="text-sm font-bold tracking-wider text-[#e1b7a8]">Practical information</p>
+      <h2 class="mt-3 max-w-3xl text-4xl font-black sm:text-5xl">Plan a respectful, unhurried visit</h2>
+      <div class="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+        <article class="rounded-3xl border border-white/12 bg-white/[.06] p-6"><p class="text-sm font-bold text-[#e1b7a8]">Opening hours</p><h3 class="mt-2 text-xl font-black">{VISIT.opens}–{VISIT.closes}</h3><p class="mt-3 leading-7 text-white/72">A Google Maps listing on 25 October 2026 showed 10am–5pm. Confirm current entry and special-day restrictions separately; this is not a permanent official timetable.</p></article>
+        <article class="rounded-3xl border border-white/12 bg-white/[.06] p-6"><p class="text-sm font-bold text-[#e1b7a8]">Best time</p><h3 class="mt-2 text-xl font-black">Within confirmed hours</h3><p class="mt-3 leading-7 text-white/72">Choose your visit within confirmed opening hours based on real heat, UV, rain and your group’s needs. Good light does not guarantee permission to enter any part or to take photographs.</p></article>
+        <article class="rounded-3xl border border-white/12 bg-white/[.06] p-6"><p class="text-sm font-bold text-[#e1b7a8]">Time to allow</p><h3 class="mt-2 text-xl font-black">about 1.5–2 hours</h3><p class="mt-3 leading-7 text-white/72">One to two hours can be a starting point; time changes with which parts are open, your pace, breaks and controls. Seeing every part is not guaranteed.</p></article>
+        <article class="rounded-3xl border border-white/12 bg-white/[.06] p-6"><p class="text-sm font-bold text-[#e1b7a8]">Etiquette</p><h3 class="mt-2 text-xl font-black">Quiet and dignity</h3><p class="mt-3 leading-7 text-white/72">This is a national memorial. Respect the flower-laying area, the graves and the ceremonial paths; follow security staff instructions.</p></article>
+      </div>
+      <div class="mt-8 flex flex-wrap gap-3 text-sm font-bold">
+        <a href="/en/visit/location/" class="focus-ring rounded-full border border-white/30 px-5 py-2.5 text-white no-underline hover:bg-white/10">Where it is →</a>
+        <a href="/en/visit/opening-hours/" class="focus-ring rounded-full border border-white/30 px-5 py-2.5 text-white no-underline hover:bg-white/10">Opening hours →</a>
+        <a href="/en/visit/entry-costs/" class="focus-ring rounded-full border border-white/30 px-5 py-2.5 text-white no-underline hover:bg-white/10">Entry and costs →</a>
+        <a href="/en/transport/from-dhaka/" class="focus-ring rounded-full border border-white/30 px-5 py-2.5 text-white no-underline hover:bg-white/10">Getting there →</a>
+      </div>
+      <p class="mt-6 text-sm leading-6 text-white/55">Note: hours, entry and special-day arrangements are changeable. This guide is not a permanent official notice.</p>
+    </div>
+  </section>
+
+  <section id="history" class="memorial-lines container-shell py-18 sm:py-24">
+    <div class="relative grid gap-12 lg:grid-cols-[.9fr_1.1fr] lg:items-center">
+      <div>
+        <p class="section-kicker">History and architecture</p>
+        <h2 class="mt-3 text-4xl font-black leading-tight sm:text-5xl">A memorial rising towards seven historic chapters</h2>
+        <div class="mt-6 space-y-4 text-lg leading-8 text-[#3f4a44]">
+          <p>The National Martyrs’ Monument stands in memory of those who died in Bangladesh’s 1971 Liberation War. It is in Savar, about 35 km north-west of Dhaka, and was designed by the architect Syed Mainul Hossain.</p>
+          <p>His design was selected from 57 entries in the 1978 national design competition. The main structure is built as a series of seven pairs of triangular concrete walls; rising towards a peak of about 150 ft, the walls recall the seven chapters of Bangladesh’s long political struggle for independence.</p>
+        </div>
+        <div class="mt-8 flex flex-wrap gap-3 text-sm font-semibold">
+          <a class="rounded-full border border-black/15 px-4 py-2 hover:border-[#8a2e2a] hover:text-[#8a2e2a]" target="_blank" rel="noopener noreferrer" href={OFFICIAL_SOURCES[0].url}>{OFFICIAL_SOURCES[0].nameEn}</a>
+          <a class="rounded-full border border-black/15 px-4 py-2 hover:border-[#8a2e2a] hover:text-[#8a2e2a]" target="_blank" rel="noopener noreferrer" href={OFFICIAL_SOURCES[1].url}>{OFFICIAL_SOURCES[1].nameEn}</a>
+        </div>
+        <div class="mt-8 flex flex-wrap gap-3 text-sm font-bold">
+          <a href="/en/history/why-built/" class="focus-ring rounded-full bg-[#173d30] px-5 py-2.5 text-white no-underline hover:bg-[#0f2d23]">Why it was built →</a>
+          <a href="/en/architecture/seven-walls/" class="focus-ring rounded-full border border-black/20 px-5 py-2.5 no-underline hover:border-[#8a2e2a] hover:text-[#8a2e2a]">The seven walls →</a>
+          <a href="/en/history/construction-timeline/" class="focus-ring rounded-full border border-black/20 px-5 py-2.5 no-underline hover:border-[#8a2e2a] hover:text-[#8a2e2a]">Construction timeline →</a>
+        </div>
+      </div>
+      <figure class="overflow-hidden rounded-[2rem] bg-[#1b3027] shadow-2xl shadow-black/10">
+        <img src="/images/smritisoudho-aerial.svg" alt="Conceptual geometric design illustration — not a photograph" width="1280" height="853" loading="lazy" class="aspect-[4/3] w-full object-cover" />
+        <figcaption class="px-5 py-4 text-sm text-white/70">Original conceptual illustration — not a photograph or an accurate architectural rendering.</figcaption>
+      </figure>
+    </div>
+
+    <div class="relative mt-16 grid gap-3 sm:grid-cols-2 lg:grid-cols-7">
+      {[
+        ['1952','Language Movement'],['1954','United Front election'],['1956','Constitutional movement'],['1962','Education Movement'],['1966','Six Point Movement'],['1969','Mass uprising'],['1971','Liberation War']
+      ].map(([year,label], i) => (
+        <div class="relative overflow-hidden rounded-2xl border border-black/10 bg-white/65 p-5 pt-12">
+          <span class="absolute left-5 top-0 h-9 w-px bg-[#8a2e2a]" style={`transform:rotate(${(i-3)*3}deg);transform-origin:top`}></span>
+          <p class="text-2xl font-black text-[#8a2e2a]">{year}</p><p class="mt-1 text-sm font-bold leading-6">{label}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <TopicsDirectory lang="en" />
+
+  <section class="border-y border-black/10 bg-[#e7dfd2] py-18 sm:py-24">
+    <div class="container-shell grid gap-12 lg:grid-cols-[.9fr_1.1fr]">
+      <div>
+        <p class="section-kicker">Getting here</p>
+        <h2 class="mt-3 text-4xl font-black sm:text-5xl">Along the Dhaka–Aricha Highway to Nabinagar</h2>
+        <div class="mt-7 space-y-5">
+          <div class="flex gap-4"><span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#8a2e2a] font-black text-white">1</span><div><h3 class="font-black">The westbound corridor from Dhaka</h3><p class="mt-1 leading-7 text-[#505a54]">Pick the current route on a map from your starting point to the monument itself. Road works, traffic and special programmes change the timing; no single corridor suits everyone.</p></div></div>
+          <div class="flex gap-4"><span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#8a2e2a] font-black text-white">2</span><div><h3 class="font-black">Verify the current bus and stop</h3><p class="mt-1 leading-7 text-[#505a54]">Confirm the current Savar–Nabinagar bus, the stop to get off and the final entrance with the operator on the day; no specific timetable or direct service is confirmed here.</p></div></div>
+          <div class="flex gap-4"><span class="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#8a2e2a] font-black text-white">3</span><div><h3 class="font-black">Car or ride-hailing</h3><p class="mt-1 leading-7 text-[#505a54]">Use “National Martyrs’ Monument” or the Plus Code W763+GW, Savar in the map. Agree a meeting point with the driver for the return journey beforehand.</p></div></div>
+        </div>
+      </div>
+      <div class="overflow-hidden rounded-[2rem] border border-black/10 bg-white p-2 shadow-xl shadow-black/5">
+        <iframe
+          src={ATTRACTION.mapsEmbedUrl}
+          class="h-[520px] w-full rounded-[1.55rem] border-0"
+          allowfullscreen
+          loading="lazy"
+          referrerpolicy="strict-origin-when-cross-origin"
+          title="Map of the National Martyrs’ Monument"
+        ></iframe>
+        <div class="flex flex-wrap items-center justify-between gap-3 p-4 text-sm">
+          <span class="text-black/60">{ATTRACTION.addressRegionFullEn} · {ATTRACTION.plusCode}</span>
+          <a href={ATTRACTION.googleMapsUrl} target="_blank" rel="noopener noreferrer" class="font-bold text-[#8a2e2a]">Open the larger map →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="nearby" class="container-shell py-18 sm:py-24">
+    <div class="max-w-3xl">
+      <p class="section-kicker">Spending time nearby</p>
+      <h2 class="mt-3 text-4xl font-black sm:text-5xl">Food, rest and places around Savar</h2>
+      <p class="mt-5 text-lg leading-8 text-[#505a54]">The list below is not a commercial recommendation; it is guidance by area and public space for planning your route. Check opening hours and access rules separately.</p>
+    </div>
+    <div class="mt-10 grid gap-6 lg:grid-cols-2">
+      <article class="card rounded-[2rem] p-7"><h3 class="text-2xl font-black">Food and planning the return</h3><p class="mt-5 leading-8">Carry your own drinking water and necessary food. The current opening hours, prices or quality of any specific shop in Nabinagar or Savar are not verified here. Confirm in advance where you will stop, where you can sit and your return transport.</p></article>
+      <article class="card rounded-[2rem] p-7"><h3 class="text-2xl font-black">If you add another destination</h3><p class="mt-5 leading-8">Another campus, park or museum near the monument does not automatically share the same entry arrangements. Verify the chosen place’s separate identity, hours, permission and return route, and keep to just one alternative; seeing everything in one trip is not guaranteed.</p></article>
+    </div>
+    <div class="mt-8 flex flex-wrap gap-3 text-sm font-bold">
+      <a href="/en/nearby/food-rest-nabinagar/" class="focus-ring rounded-full bg-[#173d30] px-5 py-2.5 text-white no-underline hover:bg-[#0f2d23]">Food and rest →</a>
+      <a href="/en/itineraries/savar-half-day/" class="focus-ring rounded-full border border-black/20 px-5 py-2.5 no-underline hover:border-[#8a2e2a] hover:text-[#8a2e2a]">A half-day route →</a>
+      <a href="/en/itineraries/dhaka-savar-history-day/" class="focus-ring rounded-full border border-black/20 px-5 py-2.5 no-underline hover:border-[#8a2e2a] hover:text-[#8a2e2a]">A full history day →</a>
+    </div>
+  </section>
+
+  <section id="faq" class="container-shell py-18 sm:py-24">
+    <div class="mx-auto max-w-4xl">
+      <p class="section-kicker">Common questions</p>
+      <h2 class="mt-3 text-4xl font-black sm:text-5xl">What is useful to know before you go</h2>
+      <p class="mt-5 text-sm leading-6 text-[#5d665f]">Questions about opening hours, location, height and entry are answered first. Last updated: {LAST_UPDATED.iso}.</p>
+      <div class="mt-9 divide-y divide-black/10 border-y border-black/10">
+        {faq.map((item, i) => (
+          <details class="group py-6" open={i === 0}>
+            <summary class="focus-ring flex cursor-pointer list-none items-start justify-between gap-6 rounded-lg text-lg font-black">
+              <span>{item.q}</span><span aria-hidden="true" class="text-[#8a2e2a] transition group-open:rotate-45">+</span>
+            </summary>
+            <p class="mt-4 max-w-3xl leading-8 text-[#505a54]">{item.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="container-shell py-18 sm:py-24">
+    <div class="mx-auto max-w-5xl">
+      <p class="section-kicker">Sources and verification policy</p>
+      <h2 class="mt-3 text-4xl font-black leading-tight sm:text-5xl">Which information, and how it was written</h2>
+      <p class="mt-6 max-w-4xl text-lg leading-8 text-[#505a54]">
+        This is an independent, non-profit visitor information project. It contains no institutional statement from any government body and no commercial recommendation.
+        History and architecture information is given against the public official and encyclopaedic sources below. No current vehicle or service list is confirmed.
+        Ground-management hours or rules can change, so check the latest notice from the upazila administration or the tourism board before an important visit.
+      </p>
+
+      <div class="mt-9 grid gap-4 md:grid-cols-3">
+        {OFFICIAL_SOURCES.map((s, i) => (
+          <a href={s.url} target="_blank" rel="noopener noreferrer" class="card focus-ring rounded-3xl p-6 no-underline transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-black/10">
+            <p class="text-xs font-black tracking-wider text-[#8a2e2a]">Authoritative source</p>
+            <h3 class="mt-2 text-lg font-black leading-6 text-[#15221b]">{s.nameEn}</h3>
+            <p class="mt-3 text-sm leading-7 text-[#566059]">
+              {i === 0 ? 'The local government portal; use it to look for current special-day guidance and verify the authority’s information.' : i === 1 ? 'The official national tourism listing of the monument.' : 'Background and construction history in the national encyclopaedia of the Asiatic Society of Bangladesh.'}
+            </p>
+            <span class="mt-4 inline-flex items-center gap-1 text-sm font-bold text-[#8a2e2a]">Open source <span aria-hidden="true">→</span></span>
+          </a>
+        ))}
+      </div>
+
+      <div class="mt-8 grid gap-4 lg:grid-cols-2">
+        <div class="rounded-3xl border border-black/10 bg-[#eee8dc] p-6 text-sm leading-7 text-[#4d5751]">
+          <strong class="block text-[#15221b]">About the rating</strong>
+          The public visitor rating on Google Maps is {ATTRACTION.rating.value} (about {ATTRACTION.rating.reviewCount.toLocaleString('en-US')} reviews; a 25 October 2026 snapshot). It is not an official assessment and can change over time; it is shown here only as a data point.
+        </div>
+        <div class="rounded-3xl border border-black/10 bg-[#eee8dc] p-6 text-sm leading-7 text-[#4d5751]">
+          <strong class="block text-[#15221b]">Images and updates</strong>
+          The published <a href="/CREDITS.txt" class="underline">image credits</a> record the identity and usage rights of the conceptual illustrations. Do not use them as photographs.
+          Last updated: {LAST_UPDATED.iso} · Savar, Dhaka, Bangladesh.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="container-shell pb-6">
+    <div class="rounded-[2rem] bg-[#ded6c9] p-7 sm:p-10">
+      <p class="section-kicker">About this guide</p>
+      <h2 class="mt-2 text-2xl font-black">{allPages.length} in-depth topic guides</h2>
+      <p class="mt-4 max-w-4xl leading-7 text-[#505a54]">Alongside this homepage, {allPages.length} topic pages answer individual visitor questions in depth in English and Bengali. <a href="#topics" class="font-bold underline">Jump to the topic directory</a>.</p>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,26 @@
+---
+// 单一动态路由：同时生成孟加拉语（根路径）与英语（/en/）的全部主题页，以及英语首页。
+import ContentLayout from '../layouts/ContentLayout.astro';
+import EnHome from '../components/EnHome.astro';
+import { allPages } from '../data/pages';
+import type { ContentPage, Lang } from '../data/pages/types';
+
+interface PageProps {
+  page?: ContentPage;
+  lang?: Lang;
+  hub?: 'en';
+}
+
+export function getStaticPaths() {
+  const paths: { params: { slug: string }; props: PageProps }[] = [];
+  for (const page of allPages) {
+    paths.push({ params: { slug: page.slug }, props: { page, lang: 'bn' } });
+    paths.push({ params: { slug: `en/${page.slug}` }, props: { page, lang: 'en' } });
+  }
+  paths.push({ params: { slug: 'en' }, props: { hub: 'en' } });
+  return paths;
+}
+
+const { page, lang, hub } = Astro.props as PageProps;
+---
+{hub ? <EnHome /> : page && lang ? <ContentLayout page={page} lang={lang} /> : null}
