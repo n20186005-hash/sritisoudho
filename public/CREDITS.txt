@@ -1,7 +1,24 @@
 ﻿National Martyrs’ Monument visitor guide — image credits
-Checked 25 October 2026
+Verified photographs — Wikimedia Commons file pages checked 3 November 2026.
 
-smritisoudho-reflection.svg, smritisoudho-aerial.svg, smritisoudho-walkway.svg, smritisoudho-detail.svg
-Original geometric illustrations created for this guide, 2026. Not photographs, measured architectural renderings or evidence of current conditions. No third-party photograph has been reproduced in these files.
-These four original SVG illustrations are dedicated to the public domain under CC0 1.0:
-https://creativecommons.org/publicdomain/zero/1.0/
+1. /images/smritisoudho-reflection.jpg
+   National Martyrs’ Memorial 107.jpg, 2018 — photographer Shahriar Amin Fahim247
+   https://commons.wikimedia.org/wiki/File:National_Martyrs%E2%80%99_Memorial_107.jpg
+   CC BY-SA 4.0: https://creativecommons.org/licenses/by-sa/4.0/
+
+2. /images/smritisoudho-aerial.jpg
+   3.জাতীয় স্মৃতিসৌধ.jpg, 2020 — photographer Pinu Rahman
+   https://commons.wikimedia.org/wiki/File:3.%E0%A6%9C%E0%A6%BE%E0%A6%A4%E0%A7%80%E0%A6%AF%E0%A6%BC_%E0%A6%B8%E0%A7%8D%E0%A6%AE%E0%A7%83%E0%A6%A4%E0%A6%BF%E0%A6%B8%E0%A7%8C%E0%A6%A7.jpg
+   CC BY-SA 4.0: https://creativecommons.org/licenses/by-sa/4.0/
+
+3. /images/smritisoudho-walkway.jpg
+   Jatiyo Smriti Soudho, Savar (1).jpg, 2019 — photographer Mfsam12
+   https://commons.wikimedia.org/wiki/File:Jatiyo_Smriti_Soudho,_Savar_(1).jpg
+   CC BY-SA 4.0: https://creativecommons.org/licenses/by-sa/4.0/
+
+4. /images/smritisoudho-detail.jpg
+   National Martyrs’ Memorial 109.jpg, 2018 — photographer Shahriar Amin Fahim247
+   https://commons.wikimedia.org/wiki/File:National_Martyrs%E2%80%99_Memorial_109.jpg
+   CC BY-SA 4.0: https://creativecommons.org/licenses/by-sa/4.0/
+
+All photographs were resized/compressed for website use and can be cropped by responsive CSS. Copyright remains with each photographer. CC BY-SA 4.0 permits reuse and adaptation subject to attribution, licence linking, indicating changes and applicable share-alike obligations. The earlier conceptual .svg assets remain in the repository (CC0 1.0) but are not displayed.

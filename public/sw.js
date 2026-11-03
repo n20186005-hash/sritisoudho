@@ -1,12 +1,12 @@
 /* জাতীয় স্মৃতিসৌধ দর্শনার্থী গাইড · Service Worker
- * v2026-10-25
+ * v2026-11-03-images
  * - navigate (HTML): network-first → fallback cached same page → offline503
  * - static assets (JS/CSS/IMG/SVG): stale-while-revalidate
  * - same-origin only
  */
-const VERSION = 'nmm-guide-v2026-10-25';
+const VERSION = 'nmm-guide-v2026-11-03-images';
 const CORE = [VERSION, 'shell-v1'].join('-');
-const SHELL = ['/', '/images/smritisoudho-reflection.svg', '/images/smritisoudho-aerial.svg', '/images/smritisoudho-walkway.svg', '/images/smritisoudho-detail.svg', '/favicon.svg', '/site.webmanifest'];
+const SHELL = ['/', '/images/smritisoudho-reflection.jpg', '/images/smritisoudho-aerial.jpg', '/images/smritisoudho-walkway.jpg', '/images/smritisoudho-detail.jpg', '/favicon.svg', '/site.webmanifest'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CORE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));

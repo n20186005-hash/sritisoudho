@@ -11,7 +11,7 @@ import TopicsDirectory from '../components/TopicsDirectory.astro';
 import { ATTRACTION, FACTS, LAST_UPDATED, OFFICIAL_SOURCES, SITE_NAME, VISIT } from '../data/site';
 
 const homeUrl = Astro.site ? new URL('/', Astro.site).href : undefined;
-const heroUrl = Astro.site ? new URL('/images/smritisoudho-reflection.svg', Astro.site).href : undefined;
+const heroUrl = Astro.site ? new URL('/images/smritisoudho-reflection.jpg', Astro.site).href : undefined;
 
 const title = 'জাতীয় স্মৃতিসৌধ সাভার: খোলার সময়, অবস্থান ও উচ্চতা';
 const description = 'সাভারের জাতীয় স্মৃতিসৌধের অবস্থান, তারিখসহ মানচিত্রের সময়, প্রবেশের আগে যা নিশ্চিত করবেন, ১৫০ ফুট উচ্চতা ও ইতিহাস, যাতায়াতের প্রস্তুতি এবং আবহাওয়া পূর্বাভাস।';
@@ -142,7 +142,7 @@ const webpageSchema: Record<string, unknown> = {
     name: SITE_NAME,
     url: homeUrl
   },
-  ...(heroUrl ? { primaryImageOfPage: { '@type': 'ImageObject', url: heroUrl, caption: 'মৌলিক ধারণামূলক চিত্র; বাস্তব আলোকচিত্র নয়' } } : {})
+  ...(heroUrl ? { primaryImageOfPage: { '@type': 'ImageObject', url: heroUrl, caption: 'সাভারের জাতীয় স্মৃতিসৌধ ও প্রতিফলন-পুকুর — ছবি: Shahriar Amin Fahim247, CC BY-SA 4.0' } } : {})
 };
 ---
 <BaseLayout
@@ -151,7 +151,7 @@ const webpageSchema: Record<string, unknown> = {
   jsonLd={[attraction, faqSchema, orgSchema, webpageSchema]}
 >
   <section class="relative min-h-[78vh] overflow-hidden bg-[#14251e] text-white">
-    <img src="/images/smritisoudho-reflection.svg" alt="মৌলিক ধারণামূলক চিত্র — স্মারক, পথ ও জলাশয়ের জ্যামিতিক ইঙ্গিত; বাস্তব আলোকচিত্র নয়" class="absolute inset-0 h-full w-full object-cover" width="1280" height="853" />
+    <img src="/images/smritisoudho-reflection.jpg" alt="সাভারের জাতীয় স্মৃতিসৌধ ও সামনের প্রতিফলন-পুকুরের বাস্তব ছবি" class="absolute inset-0 h-full w-full object-cover" width="1280" height="853" />
     <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/45 to-black/15"></div>
     <div class="absolute inset-0 bg-gradient-to-t from-[#14251e] via-transparent to-transparent"></div>
     <div class="container-shell relative flex min-h-[78vh] items-end py-14 sm:py-20">
@@ -168,7 +168,7 @@ const webpageSchema: Record<string, unknown> = {
     </div>
   </section>
 
-  <p class="container-shell mt-3 text-sm text-[#505a54]">পটভূমিটি মৌলিক ধারণামূলক চিত্র; স্মৃতিসৌধের বাস্তব আলোকচিত্র নয়।</p>
+  <p class="container-shell mt-3 text-sm text-[#505a54]">সাভারের জাতীয় স্মৃতিসৌধ ও প্রতিফলন-পুকুরের ছবি: <a href="https://commons.wikimedia.org/wiki/File:National_Martyrs%E2%80%99_Memorial_107.jpg" target="_blank" rel="noopener noreferrer" class="underline">Shahriar Amin Fahim247 / Wikimedia Commons</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer" class="underline">CC BY-SA 4.0</a>।</p>
 
   <section class="border-b border-black/10 bg-[#eee8dc]" aria-label="এক নজরে মূল তথ্য">
     <div class="container-shell grid gap-3 py-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -197,8 +197,8 @@ const webpageSchema: Record<string, unknown> = {
         </div>
       </div>
       <figure class="overflow-hidden rounded-[2rem] bg-[#1b3027] shadow-2xl shadow-black/10">
-        <img src="/images/smritisoudho-aerial.svg" alt="ধারণামূলক জ্যামিতিক নকশাচিত্র — বাস্তব আলোকচিত্র নয়" width="1280" height="853" loading="lazy" class="aspect-[4/3] w-full object-cover" />
-        <figcaption class="px-5 py-4 text-sm text-white/70">মৌলিক ধারণামূলক চিত্র—বাস্তব আলোকচিত্র বা নির্ভুল স্থাপত্যরূপ নয়।</figcaption>
+        <img src="/images/smritisoudho-aerial.jpg" alt="আকাশ থেকে দেখা সাভারের জাতীয় স্মৃতিসৌধ, প্রতিফলন-পুকুর ও উদ্যান" width="1600" height="1067" loading="lazy" class="aspect-[4/3] w-full object-cover" />
+        <figcaption class="px-5 py-4 text-sm text-white/70">স্মৃতিসৌধের আকাশ থেকে তোলা ছবি: <a class="underline" href="https://commons.wikimedia.org/wiki/File:3.%E0%A6%9C%E0%A6%BE%E0%A6%A4%E0%A7%80%E0%A6%AF%E0%A6%BC_%E0%A6%B8%E0%A7%8D%E0%A6%AE%E0%A7%83%E0%A6%A4%E0%A6%BF%E0%A6%B8%E0%A7%8C%E0%A6%A7.jpg" target="_blank" rel="noopener noreferrer">Pinu Rahman / Wikimedia Commons</a> · <a class="underline" href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a>।</figcaption>
       </figure>
     </div>
 
@@ -233,8 +233,8 @@ const webpageSchema: Record<string, unknown> = {
   <section class="container-shell py-18 sm:py-24">
     <div class="grid gap-6 lg:grid-cols-2">
       <figure class="overflow-hidden rounded-[2rem] bg-[#eee8dc]">
-        <img src="/images/smritisoudho-walkway.svg" alt="ধারণামূলক জ্যামিতিক নকশাচিত্র — বাস্তব আলোকচিত্র নয়" width="1280" height="720" loading="lazy" class="aspect-[16/10] w-full object-cover" />
-        <figcaption class="p-5 text-sm text-black/60">পথ ও ত্রিভুজের ধারণামূলক চিত্র—বাস্তব দৃশ্য বা বর্তমান প্রবেশপথের নথি নয়।</figcaption>
+        <img src="/images/smritisoudho-walkway.jpg" alt="জাতীয় স্মৃতিসৌধের সামনের ইটের চত্বর, পতাকা ও স্মারকের বাস্তব ছবি" width="1280" height="853" loading="lazy" class="aspect-[16/10] w-full object-cover" />
+        <figcaption class="p-5 text-sm text-black/60">স্মৃতিসৌধের সামনের চত্বর: <a class="underline" href="https://commons.wikimedia.org/wiki/File:Jatiyo_Smriti_Soudho,_Savar_(1).jpg" target="_blank" rel="noopener noreferrer">Mfsam12 / Wikimedia Commons</a> · <a class="underline" href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a>।</figcaption>
       </figure>
       <div class="grid gap-6 sm:grid-cols-2">
         <article class="card rounded-3xl p-7"><p class="section-kicker">টিকিট / খরচ</p><h2 class="mt-2 text-2xl font-black">প্রবেশ ফি</h2><p class="mt-4 leading-7 text-[#4d5751]">বর্তমান সাধারণ প্রবেশমূল্য নিশ্চিত করা যায়নি। ফি উল্লেখ না থাকাকে বিনামূল্যে প্রবেশের প্রমাণ ধরবেন না। ব্যবস্থাপনার কাছে বর্তমান টিকিট বা বিশেষ দিনের নিয়ম জেনে নিন; পরিবহন ও ব্যক্তিগত খরচ আলাদা।</p></article>
@@ -296,8 +296,8 @@ const webpageSchema: Record<string, unknown> = {
         <p class="mt-4 max-w-3xl leading-8 text-white/78">স্মৃতিসৌধটি ঢাকা–আরিচা মহাসড়কের পাশে সাভার উপজেলার নবীনগরে। কেন্দ্রীয় অবস্থান আনুমানিক {ATTRACTION.latitude.toLocaleString("bn-BD", {minimumFractionDigits:4,maximumFractionDigits:4,useGrouping:false})}° উত্তর, {ATTRACTION.longitude.toLocaleString("bn-BD", {minimumFractionDigits:4,maximumFractionDigits:4,useGrouping:false})}° পূর্ব। এটি বাংলাদেশের মুক্তিযুদ্ধের জাতীয় স্মারক হিসেবে সরকারি পর্যটন উৎস ও জাতীয় জ্ঞানকোষে একই সত্তা হিসেবে নথিভুক্ত।</p>
       </div>
       <figure class="overflow-hidden rounded-3xl border border-white/20 bg-black/15">
-        <img src="/images/smritisoudho-detail.svg" alt="ধারণামূলক জ্যামিতিক নকশাচিত্র — বাস্তব আলোকচিত্র নয়" width="1280" height="853" loading="lazy" class="aspect-[16/10] w-full object-cover" />
-      <figcaption class="p-4 text-sm text-white/70">মৌলিক জ্যামিতিক নকশাচিত্র — আলোকচিত্র বা নির্ভুল স্থাপত্যরূপ নয়।</figcaption></figure>
+        <img src="/images/smritisoudho-detail.jpg" alt="জাতীয় স্মৃতিসৌধের ত্রিভুজাকার কংক্রিট স্থাপত্যের কাছ থেকে তোলা ছবি" width="1280" height="853" loading="lazy" class="aspect-[16/10] w-full object-cover" />
+      <figcaption class="p-4 text-sm text-white/70">স্মৃতিসৌধের স্থাপত্য: <a class="underline" href="https://commons.wikimedia.org/wiki/File:National_Martyrs%E2%80%99_Memorial_109.jpg" target="_blank" rel="noopener noreferrer">Shahriar Amin Fahim247 / Wikimedia Commons</a> · <a class="underline" href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a>।</figcaption></figure>
     </div>
   </section>
 

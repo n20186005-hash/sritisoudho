@@ -8,7 +8,7 @@ import { allPages } from '../data/pages';
 import { ATTRACTION, LAST_UPDATED, OFFICIAL_SOURCES, SITE_NAME_EN, VISIT, withSiteNameEn } from '../data/site';
 
 const homeUrl = Astro.site ? new URL('/en/', Astro.site).href : undefined;
-const heroUrl = Astro.site ? new URL('/images/smritisoudho-reflection.svg', Astro.site).href : undefined;
+const heroUrl = Astro.site ? new URL('/images/smritisoudho-reflection.jpg', Astro.site).href : undefined;
 
 const title = withSiteNameEn('National Martyrs’ Monument, Savar: hours, location and height');
 const description =
@@ -120,7 +120,7 @@ const webpageSchema: Record<string, unknown> = {
   inLanguage: 'en',
   dateModified: LAST_UPDATED.iso,
   isPartOf: { '@type': 'WebSite', name: SITE_NAME_EN, url: homeUrl },
-  ...(heroUrl ? { primaryImageOfPage: { '@type': 'ImageObject', url: heroUrl, caption: 'Original conceptual illustration; not a photograph' } } : {})
+  ...(heroUrl ? { primaryImageOfPage: { '@type': 'ImageObject', url: heroUrl, caption: 'National Martyrs’ Monument and reflection pool in Savar — photo by Shahriar Amin Fahim247, CC BY-SA 4.0' } } : {})
 };
 ---
 <BaseLayout
@@ -131,7 +131,7 @@ const webpageSchema: Record<string, unknown> = {
   jsonLd={[attractionSchema, faqSchema, webpageSchema]}
 >
   <section class="relative min-h-[78vh] overflow-hidden bg-[#14251e] text-white">
-    <img src="/images/smritisoudho-reflection.svg" alt="Original conceptual illustration — a geometric suggestion of a memorial, path and water; not a photograph" class="absolute inset-0 h-full w-full object-cover" width="1280" height="853" />
+    <img src="/images/smritisoudho-reflection.jpg" alt="Photograph of the National Martyrs’ Monument in Savar and its reflecting pool" class="absolute inset-0 h-full w-full object-cover" width="1280" height="853" />
     <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/45 to-black/15"></div>
     <div class="absolute inset-0 bg-gradient-to-t from-[#14251e] via-transparent to-transparent"></div>
     <div class="container-shell relative flex min-h-[78vh] items-end py-14 sm:py-20">
@@ -148,7 +148,7 @@ const webpageSchema: Record<string, unknown> = {
     </div>
   </section>
 
-  <p class="container-shell mt-3 text-sm text-[#505a54]">The background is an original conceptual illustration, not a photograph of the monument.</p>
+  <p class="container-shell mt-3 text-sm text-[#505a54]">Photograph of the National Martyrs’ Monument and reflecting pool by <a class="underline" href="https://commons.wikimedia.org/wiki/File:National_Martyrs%E2%80%99_Memorial_107.jpg" target="_blank" rel="noopener noreferrer">Shahriar Amin Fahim247 / Wikimedia Commons</a> · <a class="underline" href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a>.</p>
 
   <section class="border-b border-black/10 bg-[#eee8dc]" aria-label="Key facts at a glance">
     <div class="container-shell grid gap-3 py-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -202,8 +202,8 @@ const webpageSchema: Record<string, unknown> = {
         </div>
       </div>
       <figure class="overflow-hidden rounded-[2rem] bg-[#1b3027] shadow-2xl shadow-black/10">
-        <img src="/images/smritisoudho-aerial.svg" alt="Conceptual geometric design illustration — not a photograph" width="1280" height="853" loading="lazy" class="aspect-[4/3] w-full object-cover" />
-        <figcaption class="px-5 py-4 text-sm text-white/70">Original conceptual illustration — not a photograph or an accurate architectural rendering.</figcaption>
+        <img src="/images/smritisoudho-aerial.jpg" alt="Aerial photograph of the National Martyrs’ Monument, its reflecting pool and grounds" width="1600" height="1067" loading="lazy" class="aspect-[4/3] w-full object-cover" />
+        <figcaption class="px-5 py-4 text-sm text-white/70">Aerial photograph by <a class="underline" href="https://commons.wikimedia.org/wiki/File:3.%E0%A6%9C%E0%A6%BE%E0%A6%A4%E0%A7%80%E0%A6%AF%E0%A6%BC_%E0%A6%B8%E0%A7%8D%E0%A6%AE%E0%A7%83%E0%A6%A4%E0%A6%BF%E0%A6%B8%E0%A7%8C%E0%A6%A7.jpg" target="_blank" rel="noopener noreferrer">Pinu Rahman / Wikimedia Commons</a> · <a class="underline" href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a>.</figcaption>
       </figure>
     </div>
 
@@ -314,7 +314,7 @@ const webpageSchema: Record<string, unknown> = {
         </div>
         <div class="rounded-3xl border border-black/10 bg-[#eee8dc] p-6 text-sm leading-7 text-[#4d5751]">
           <strong class="block text-[#15221b]">Images and updates</strong>
-          The published <a href="/CREDITS.txt" class="underline">image credits</a> record the identity and usage rights of the conceptual illustrations. Do not use them as photographs.
+          The published <a href="/CREDITS.txt" class="underline">image credits</a> identify the photographers, original files, licences and image resizing.
           Last updated: {LAST_UPDATED.iso} · Savar, Dhaka, Bangladesh.
         </div>
       </div>
